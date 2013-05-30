@@ -56,7 +56,7 @@ describe('common', function() {
         var pattern = { alpha: 'bravo', charly: 'delta' };
 
         it('should behave like #verifyOptions in validation', function() {
-            common.verifyAndSanitizeOptions({ alpha: true, charly: true, invalid: 1 }, pattern).should.be.an.instanceof(Error);
+            common.verifyAndSanitizeOptions({ alpha: true, charly: true, pipapo: 1 }, pattern).should.be.an.instanceof(Error);
         })
         it('should not modify options when all provided', function() {
             var opts = { alpha: true, charly: false };
