@@ -1,4 +1,5 @@
-var gearmanode  = require('../lib/gearmanode'),
+var should      = require('should'),
+    gearmanode  = require('../lib/gearmanode'),
     Client      = gearmanode.Client;
 
 
@@ -41,6 +42,15 @@ describe('client', function() {
             c.jobServers[0].port.should.equal(4730);
             c.jobServers[1].host.should.equal('localhost');
             c.jobServers[1].port.should.equal(4444);
+        })
+    })
+
+    describe('#getConnection', function() {
+        var c = gearmanode.client();
+
+        it('should return instance of Socket', function() {
+            var socket = c.getConnection();
+            //should.exist(socket);
         })
     })
 

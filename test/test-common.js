@@ -38,9 +38,8 @@ describe('common', function() {
             var opts = { foo: true, baz: 'here', bar: 1 };
             var rslt = common.verifyOptions(opts, pattern);
 
-            it('should return true when options are OK', function() {
-                rslt.should.be.a('boolean');
-                rslt.should.be.true;
+            it('should return the options when all validations OK', function() {
+                rslt.should.equal(opts);
             })
             it('should not modify options', function() {
                 Object.keys(opts).length.should.equal(3);
