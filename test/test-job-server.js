@@ -16,11 +16,11 @@ describe('JobServer', function() {
         })
     })
 
-    describe('#getConnection', function() {
+    describe('#connect', function() {
         var js = new JobServer({ host: 'localhost', port: 4730 });
 
         it('should return instance of Socket', function() {
-            var socket = js.getConnection();
+            var socket = js.connect(function(e) {console.log('QQ ' + e)});
             //should.exist(socket);
         })
     })
