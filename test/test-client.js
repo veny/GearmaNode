@@ -1,9 +1,10 @@
 var should      = require('should'),
     gearmanode  = require('../lib/gearmanode'),
-    Client      = gearmanode.Client;
+    Client      = gearmanode.Client,
+    JobServer   = require('../lib/gearmanode/job-server').JobServer;
 
 
-describe('client', function() {
+describe('Client', function() {
 
     describe('#factory', function() {
         it('should return instance of Client', function() {
@@ -28,6 +29,7 @@ describe('client', function() {
         it('should return client with corresponding job server', function() {
             var c = gearmanode.client({ host: 'test.com', port: 4444 });
             c.jobServers.length.should.equal(1);
+            c.jobServers[0].should.be.an.instanceof(JobServer);
             c.jobServers[0].host.should.equal('test.com');
             c.jobServers[0].port.should.equal(4444);
         })
@@ -38,19 +40,12 @@ describe('client', function() {
         it('should return client with corresponding job servers', function() {
             var c = gearmanode.client({ servers: [{ host: 'foo.com'}, { port: 4444 }] });
             c.jobServers.length.should.equal(2);
+            c.jobServers[0].should.be.an.instanceof(JobServer);
             c.jobServers[0].host.should.equal('foo.com');
             c.jobServers[0].port.should.equal(4730);
+            c.jobServers[1].should.be.an.instanceof(JobServer);
             c.jobServers[1].host.should.equal('localhost');
             c.jobServers[1].port.should.equal(4444);
-        })
-    })
-
-    describe('#getConnection', function() {
-        var c = gearmanode.client();
-
-        it('should return instance of Socket', function() {
-            var socket = c.getConnection();
-            //should.exist(socket);
         })
     })
 
