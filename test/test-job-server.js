@@ -17,11 +17,27 @@ describe('JobServer', function() {
     })
 
     describe('#connect', function() {
-        var js = new JobServer({ host: 'localhost', port: 4730 });
-
-        it('should return instance of Socket', function() {
-            var socket = js.connect(function(e) {console.log('QQ ' + e)});
-            //should.exist(socket);
+        it('should return socket when connection OK', function() {
+            var js = new JobServer({ host: 'localhost', port: 4730 });
+            js.connected.should.be.false;
+            var socket = js.connect(function(arg) {
+                arg.should.be.an.instanceof(JobServer);
+                arg.should.equal(js);
+                arg.connected.should.be.true;
+            });
+            should.exist(socket);
+            should.exist(js.socket);
+            socket.should.equal(js.socket);
+        })
+        it('should fire error when connection fails', function() {
+            var js = new JobServer({ host: 'localhost', port: 1 });
+            js.connected.should.be.false;
+            var socket = js.connect(function(arg) {
+                arg.should.be.an.instanceof(Error);
+                js.connected.should.be.false;
+                should.not.exist(js.socket);
+            });
+            js.connected.should.be.false;
         })
     })
 
