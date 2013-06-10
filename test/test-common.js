@@ -1,5 +1,6 @@
 
 var should = require('should'),
+    util = require('util'),
     common = require('../lib/gearmanode/common');
 
 describe('common', function() {
@@ -94,6 +95,16 @@ describe('common', function() {
             Object.keys(opts).length.should.equal(2);
             should.strictEqual(opts.alpha, 'bravo');
             opts.charly.should.equal(true);
+        })
+
+        // BF -----------------------------------
+
+        it('should modify options when default value is boolean', function() {
+            var opts = {};
+            var rslt = common.verifyAndSanitizeOptions(opts, { foo: true, bar: false });
+            Object.keys(opts).length.should.equal(2);
+            opts.foo.should.equal(true);
+            opts.bar.should.equal(false);
         })
     })
 
