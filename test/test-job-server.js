@@ -10,6 +10,8 @@ describe('JobServer', function() {
             js.should.be.an.instanceof(JobServer);
             js.connected.should.be.false;
             should.not.exist(js.socket);
+            js.jobsWaiting4Created.length.should.equal(0);
+            Object.keys(js.jobsWaiting4Complete).length.should.equal(0);
         })
         it('should return error when missing mandatory options', function() {
             var js = new JobServer({ host: 'localhost' });
@@ -42,4 +44,17 @@ describe('JobServer', function() {
         })
     })
 
+    describe('#disconnect', function() {
+        it('should properly release all resources', function(done) {
+            var js = new JobServer({ host: 'localhost', port: 4730 });
+            var socket = js.connect(function(err, jobServer) {
+                js.disconnect();
+                js.connected.should.be.false;
+                should.not.exist(js.socket);
+                js.jobsWaiting4Created.length.should.equal(0);
+                Object.keys(js.jobsWaiting4Complete).length.should.equal(0);
+                done();
+            });
+        })
+    })
 })
