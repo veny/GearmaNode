@@ -9,35 +9,36 @@ describe('JobServer', function() {
             var js = new JobServer({ host: 'localhost', port: 4730 });
             js.should.be.an.instanceof(JobServer);
             js.connected.should.be.false;
+            should.not.exist(js.socket);
         })
-        it('should return error when incorrect options', function() {
+        it('should return error when missing mandatory options', function() {
             var js = new JobServer({ host: 'localhost' });
+            js.should.be.an.instanceof(Error);
+            js = new JobServer({ port: 4730 });
             js.should.be.an.instanceof(Error);
         })
     })
 
     describe('#connect', function() {
-        it('should return socket when connection OK', function() {
+        it('should return socket when connection OK', function(done) {
             var js = new JobServer({ host: 'localhost', port: 4730 });
-            js.connected.should.be.false;
-            var socket = js.connect(function(arg) {
-                arg.should.be.an.instanceof(JobServer);
-                arg.should.equal(js);
-                arg.connected.should.be.true;
+            var socket = js.connect(function(err, jobServer) {
+                should.not.exist(err);
+                jobServer.should.be.an.instanceof(JobServer);
+                jobServer.should.equal(js);
+                jobServer.connected.should.be.true;
+                should.exist(js.socket);
+                done();
             });
-            should.exist(socket);
-            should.exist(js.socket);
-            socket.should.equal(js.socket);
         })
-        it('should fire error when connection fails', function() {
+        it('should fire error when connection fails', function(done) {
             var js = new JobServer({ host: 'localhost', port: 1 });
-            js.connected.should.be.false;
-            var socket = js.connect(function(arg) {
-                arg.should.be.an.instanceof(Error);
+            var socket = js.connect(function(err) {
+                err.should.be.an.instanceof(Error);
                 js.connected.should.be.false;
                 should.not.exist(js.socket);
+                done();
             });
-            js.connected.should.be.false;
         })
     })
 

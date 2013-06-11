@@ -26,7 +26,13 @@ describe('Job', function() {
             job.encoding.should.equal('ascii');
         })
         it('should return error when missing mandatory options', function() {
-            var job = new Job({});
+            var job = new Job();
+            job.should.be.an.instanceof(Error);
+            job = new Job(null);
+            job.should.be.an.instanceof(Error);
+            job = new Job(true);
+            job.should.be.an.instanceof(Error);
+            job = new Job({});
             job.should.be.an.instanceof(Error);
             job = new Job({ name: 'foo' });
             job.should.be.an.instanceof(Error);
@@ -34,12 +40,23 @@ describe('Job', function() {
             job.should.be.an.instanceof(Error);
         })
         it('should return error when incorrect options', function() {
-            var job = new Job({ background: 'foo' });
+            var job = new Job({ name: 'foo', payload: 'bar', background: 'baz' });
             job.should.be.an.instanceof(Error);
-            job = new Job({ priority: 'foo' });
+            job = new Job({ name: 'foo', payload: 'bar', priority: 'baz' });
             job.should.be.an.instanceof(Error);
-            job = new Job({ encoding: 'foo' });
+            job = new Job({ name: 'foo', payload: 'bar', encoding: 'baz' });
             job.should.be.an.instanceof(Error);
+        })
+    })
+
+    describe('#abort', function() {
+        it('should emit event', function(done) {
+            var job = new Job({ name: 'reverse', payload: 'hi' });
+            job.on('aborted', function() {
+                job.processing.should.be.false;
+                done();
+            })
+            job.abort();
         })
     })
 
