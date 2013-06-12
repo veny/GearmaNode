@@ -6,6 +6,7 @@ var should      = require('should'),
 
 describe('Client', function() {
 
+
     describe('#factory', function() {
         it('should return instance of Client', function() {
             gearmanode.client().should.be.an.instanceof(Client);

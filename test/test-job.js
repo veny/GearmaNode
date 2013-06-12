@@ -4,6 +4,7 @@ var should = require('should'),
 
 describe('Job', function() {
 
+
     describe('#constructor', function() {
         it('should return default instance of Job', function() {
             var job = new Job({ name: 'reverse', payload: 'hi' });
@@ -49,8 +50,9 @@ describe('Job', function() {
         })
     })
 
+
     describe('#abort', function() {
-        it('should emit event', function(done) {
+        it('should clean up job', function(done) {
             var job = new Job({ name: 'reverse', payload: 'hi' });
             job.on('aborted', function() {
                 job.processing.should.be.false;
@@ -60,20 +62,21 @@ describe('Job', function() {
         })
     })
 
-    describe('#_getPacketType', function() {
+
+    describe('#getPacketType', function() {
         it('should return instance of Socket', function() {
             var job = new Job({ name: 'reverse', payload: 'hi' });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB);
             job = new Job({ name: 'reverse', payload: 'hi', priority: 'LOW' });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW);
             job = new Job({ name: 'reverse', payload: 'hi', priority: 'HIGH'  });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH);
             job = new Job({ name: 'reverse', payload: 'hi', background: true });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_BG);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_BG);
             job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'LOW' });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
             job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'HIGH'  });
-            job._getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
+            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
         })
     })
 
