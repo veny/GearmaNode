@@ -13,6 +13,9 @@ Node.js library for the Gearman distributed job system.
 * UTF-8
 * rock solid tests
 
+## Usage
+See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
+
 ## Client events
 * **done** - when there's no submited job waiting for state CREATED
 * **error** - when an error occured, typically a socket connection or transfer problem
@@ -20,4 +23,5 @@ Node.js library for the Gearman distributed job system.
 ## Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived
 * **complete** - when the job completed successfully
+* **timeout** - when the job has been canceled due to timeout
 * **abort** - when a job forcible termined by a client ending
