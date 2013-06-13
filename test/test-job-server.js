@@ -29,11 +29,9 @@ describe('JobServer', function() {
     describe('#connect', function() {
         it('should return socket when connection OK', function(done) {
             var js = new JobServer({ host: 'localhost', port: 4730 });
-            var socket = js.connect(function(err, jobServer) {
+            var socket = js.connect(function(err) {
                 should.not.exist(err);
-                jobServer.should.be.an.instanceof(JobServer);
-                jobServer.should.equal(js);
-                jobServer.connected.should.be.true;
+                js.connected.should.be.true;
                 should.exist(js.socket);
                 done();
             })
@@ -68,11 +66,12 @@ describe('JobServer', function() {
 
 
     describe('#submit', function() {
-        it('should connect when not connected before', function(done) {
+        it('should fail when not connected before', function(done) {
             var js = new JobServer({ host: 'localhost', port: 4730 });
-            js.submit(new Job({ name: 'reverse', payload: 'hi'}), function(err, job) {
-                js.connected.should.be.true;
-                should.exist(js.socket);
+            js.submit(new Job({ name: 'reverse', payload: 'hi'}), function(err) {
+                js.connected.should.be.false;
+                should.exist(err);
+                err.should.be.an.instanceof(Error);
                 done();
             })
         })
@@ -81,20 +80,18 @@ describe('JobServer', function() {
             var j = new Job({ name: 'reverse', payload: 'hi'});
             js.jobsWaiting4Created.length.should.equal(0);
             j.processing.should.be.false;
-            js.submit(j, function(err, job) {
+            js.submit(j, function(err) {
                 js.jobsWaiting4Created.length.should.equal(1);
                 js.jobsWaiting4Created[0].should.equal(job);
-                job.processing.should.be.true;
+                j.processing.should.be.true;
                 done();
             })
         })
         it('should call success callback if submiting OK', function(done) {
             var js = new JobServer({ host: 'localhost', port: 4730 });
             var j = new Job({ name: 'reverse', payload: 'hi'});
-            js.submit(j, function(err, job) {
+            js.submit(j, function(err) {
                 should.not.exist(err);
-                should.exist(job);
-                job.should.equal(j)
                 done();
             })
         })

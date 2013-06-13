@@ -6,6 +6,7 @@ var gearmanode = require('../lib/gearmanode');
 
 
 var c = gearmanode.client();
+
 c.submitJob({ name: 'reverse', payload: 'žluťoučký kůň', background: false, priority: 'HIGH' }, function(err, job) {
     job.on('submited', function() {
         console.log('--- Job#submited - ' + job.toString());
@@ -23,4 +24,3 @@ c.submitJob({ name: 'reverse', payload: 'žluťoučký kůň', background: false
         c.end();
     });
 })
-

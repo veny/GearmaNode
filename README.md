@@ -10,18 +10,32 @@ Node.js library for the Gearman distributed job system.
 
 ## Features
 * support for multiple job servers
-* UTF-8
+* load balancing strategy
 * rock solid tests
 
 ## Usage
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
+### Client
+
+    var gearmanode = require('gearmanode');
+    var client = gearmanode.client(); // by default expects job server on localhost:4730
+    client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
+        job.on('complete', function() {
+            console.log(job.toString() + " >>> " + job.response);
+            client.end();
+        });
+    })
+
 ## Client events
-* **done** - when there's no submited job waiting for state CREATED
-* **error** - when an error occured, typically a socket connection or transfer problem
+* **connect** - when a job server connected
+* **disconnect** - when connection to a job server terminated - TODO
+* **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
+* **done** - when there's no submited job more waiting for state CREATED
+* **error** - when an error occured, typically a transfer problem or malformed data, has parameter **Error**
 
 ## Job events
-* **created** - when response to one of the SUBMIT_JOB* packets arrived
+* **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned
 * **complete** - when the job completed successfully
-* **timeout** - when the job has been canceled due to timeout
-* **abort** - when a job forcible termined by a client ending
+* **timeout** - when the job has been canceled due to timeout - TODO
+* **abort** - when a job forcible termined by a client end
