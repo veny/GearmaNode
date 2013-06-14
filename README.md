@@ -28,8 +28,8 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
     })
 
 ## Client events
-* **connect** - when a job server connected
-* **disconnect** - when connection to a job server terminated - TODO
+* **connect** - when a job server connected (physical connection is lazy opened by first submit)
+* **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client)
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
 * **done** - when there's no submited job more waiting for state CREATED
 * **error** - when an error occured, typically a transfer problem or malformed data, has parameter **Error**

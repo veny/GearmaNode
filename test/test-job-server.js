@@ -66,8 +66,8 @@ describe('JobServer', function() {
 
 
     describe('#submit', function() {
+        var js = new JobServer({ host: 'localhost', port: 4730 });
         it('should fail when not connected before', function(done) {
-            var js = new JobServer({ host: 'localhost', port: 4730 });
             js.submit(new Job({ name: 'reverse', payload: 'hi'}), function(err) {
                 js.connected.should.be.false;
                 should.exist(err);
@@ -76,23 +76,25 @@ describe('JobServer', function() {
             })
         })
         it('should set many managing values', function(done) {
-            var js = new JobServer({ host: 'localhost', port: 4730 });
-            var j = new Job({ name: 'reverse', payload: 'hi'});
-            js.jobsWaiting4Created.length.should.equal(0);
-            j.processing.should.be.false;
-            js.submit(j, function(err) {
-                js.jobsWaiting4Created.length.should.equal(1);
-                js.jobsWaiting4Created[0].should.equal(job);
-                j.processing.should.be.true;
-                done();
+            js.connect(function () {
+                var j = new Job({ name: 'reverse', payload: 'hi'});
+                js.jobsWaiting4Created.length.should.equal(0);
+                j.processing.should.be.false;
+                js.submit(j, function(err) {
+                    js.jobsWaiting4Created.length.should.equal(1);
+                    js.jobsWaiting4Created[0].should.equal(j);
+                    j.processing.should.be.true;
+                    done();
+                })
             })
         })
         it('should call success callback if submiting OK', function(done) {
-            var js = new JobServer({ host: 'localhost', port: 4730 });
-            var j = new Job({ name: 'reverse', payload: 'hi'});
-            js.submit(j, function(err) {
-                should.not.exist(err);
-                done();
+            js.connect(function () {
+                var j = new Job({ name: 'reverse', payload: 'hi'});
+                js.submit(j, function(err) {
+                    should.not.exist(err);
+                    done();
+                })
             })
         })
 
