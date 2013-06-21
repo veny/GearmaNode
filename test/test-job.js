@@ -14,6 +14,7 @@ describe('Job', function() {
             job.background.should.be.false;
             job.priority.should.equal('NORMAL');
             job.encoding.should.equal('utf8');
+            should.not.exist(job.jobServer);
         })
         it('should return special instance of Job', function() {
             var job = new Job(
@@ -56,6 +57,7 @@ describe('Job', function() {
             var job = new Job({ name: 'reverse', payload: 'hi' });
             job.on('aborted', function() {
                 job.processing.should.be.false;
+                should.not.exist(job.jobServer);
                 done();
             })
             job.abort();
