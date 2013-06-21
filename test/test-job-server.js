@@ -33,6 +33,7 @@ describe('JobServer', function() {
                 should.not.exist(err);
                 js.connected.should.be.true;
                 should.exist(js.socket);
+                js.socket.listeners.length.should.equal(1);
                 done();
             })
         })
