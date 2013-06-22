@@ -5,7 +5,7 @@
 var gearmanode = require('../lib/gearmanode');
 
 
-// simplest sample for README.md
+// simplest sample for README.md - foreground job
 // var client = gearmanode.client(); // by default expects job server on localhost:4730
 // client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
 //     job.on('complete', function() {
@@ -25,7 +25,7 @@ client.submitJob({ name: 'sleep', payload: '3', background: true }, function(err
         setTimeout((function() {
             console.log('hello world!')
             job.getStatus();
-        }), 2000);
+        }), 1000);
         // If on of the BG versions is used, the client is not updated with
         // status or notified when the job has completed (it is detached).
         // if (job.background) {
