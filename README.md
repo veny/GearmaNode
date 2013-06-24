@@ -10,8 +10,10 @@ Node.js library for the Gearman distributed job system.
 
 ## Features
 * support for multiple job servers
-* load balancing strategy
+* load balancing strategy TODO
+* recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server) TODO
 * rock solid tests
+* in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 ## Usage
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
