@@ -29,6 +29,14 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
         });
     })
 
+### Multiple Job Servers
+
+    // two servers: foo.com:4731, bar.com:4732
+    client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
+    // two servers with default values: foo.com:4730, localhost:4731
+    client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+
+
 ## Client events
 * **connect** - when a job server connected (physical connection is lazy opened by first submit)
 * **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client)
