@@ -57,6 +57,7 @@ describe('Job', function() {
             var job = new Job({ name: 'reverse', payload: 'hi' });
             job.on('aborted', function() {
                 job.processing.should.be.false;
+                should.not.exist(job.handle);
                 should.not.exist(job.jobServer);
                 done();
             })

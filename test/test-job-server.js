@@ -14,7 +14,7 @@ describe('JobServer', function() {
             should.not.exist(js.socket);
             js.jobsWaiting4Created.length.should.equal(0);
             Object.keys(js.jobsWaiting4Complete).length.should.equal(0);
-            js.getId().should.equal('localhost:4730');
+            js.getUid().should.equal('localhost:4730');
         })
         it('should return error when missing mandatory options', function() {
             var js = new JobServer();
