@@ -6,7 +6,7 @@ var gearmanode = require('../lib/gearmanode'),
     util       = require('util');
 
 
-// simplest sample for README.md - foreground job
+// simplest sample for README.md - foreground job waiting for completition
 // var client = gearmanode.client(); // by default expects job server on localhost:4730
 // client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
 //     job.on('complete', function() {
@@ -16,21 +16,34 @@ var gearmanode = require('../lib/gearmanode'),
 // })
 
 
-var timeout = 3000;
+// simplest sample for README.md - foreground job receiving status update
 var client = gearmanode.client();
-client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err, job) {
-    job.on('created', function() {
-        console.log('--- Job#created - ' + job.toString());
-        console.log('waiting for wake-up ' + timeout + '[ms] ...')
-        setTimeout((function() {
-            client.getStatus(job);
-        }), timeout);
-    });
+client.submitJob({ name: 'sleep', payload: '3' }, function(err, job) {
     job.on('status', function(result) {
-        console.log('--- result: ' + util.inspect(result));
+        console.log('STATUS >> ' + util.inspect(result));
+    });
+    job.on('complete', function() {
+        console.log("RESULT >>> " + job.response);
         client.end();
     });
 })
+
+
+// var timeout = 3000;
+// var client = gearmanode.client();
+// client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err, job) {
+//     job.on('created', function() {
+//         console.log('--- Job#created - ' + job.toString());
+//         console.log('waiting for wake-up ' + timeout + '[ms] ...')
+//         setTimeout((function() {
+//             client.getStatus(job);
+//         }), timeout);
+//     });
+//     job.on('status', function(result) {
+//         console.log('--- result: ' + util.inspect(result));
+//         client.end();
+//     });
+// })
 
 
 // var c = gearmanode.client();
