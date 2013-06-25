@@ -9,7 +9,9 @@ describe('Client', function() {
 
     describe('#factory', function() {
         it('should return instance of Client', function() {
-            gearmanode.client().should.be.an.instanceof(Client);
+            var c = gearmanode.client();
+            c.should.be.an.instanceof(Client);
+            should.exist(c.jobs);
         })
         it('should return error when an unknown option found', function() {
             gearmanode.client({ pipapo: 1 }).should.be.an.instanceof(Error);

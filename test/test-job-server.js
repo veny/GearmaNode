@@ -86,7 +86,7 @@ describe('JobServer', function() {
                     js.jobsWaiting4Created.length.should.equal(1);
                     js.jobsWaiting4Created[0].should.equal(j);
                     j.processing.should.be.true;
-                    j.jobServer.should.equal(js);
+                    j.jobServerUid.should.equal(js.getUid());
                     done();
                 })
             })

@@ -1,5 +1,6 @@
-var should = require('should'),
-    Job    = require('../lib/gearmanode/job').Job;
+var should   = require('should'),
+    Job      = require('../lib/gearmanode/job').Job,
+    protocol = require('../lib/gearmanode/protocol');
 
 
 describe('Job', function() {
@@ -69,17 +70,17 @@ describe('Job', function() {
     describe('#getPacketType', function() {
         it('should return instance of Socket', function() {
             var job = new Job({ name: 'reverse', payload: 'hi' });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB);
             job = new Job({ name: 'reverse', payload: 'hi', priority: 'LOW' });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_LOW);
             job = new Job({ name: 'reverse', payload: 'hi', priority: 'HIGH'  });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_HIGH);
             job = new Job({ name: 'reverse', payload: 'hi', background: true });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_BG);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_BG);
             job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'LOW' });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
             job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'HIGH'  });
-            job.getPacketType().should.equal(Job.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
+            job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
         })
     })
 

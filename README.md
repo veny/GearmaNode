@@ -46,6 +46,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 ## Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned
-* **complete** - when the job completed successfully
+* **status** - TODO describe it
+* **complete** - when the non-background job completed successfully
 * **timeout** - when the job has been canceled due to timeout - TODO
-* **abort** - when a job forcible termined by a client end
+* **close** - when Job#close() called or when the job forcible closed by shutdown of client
