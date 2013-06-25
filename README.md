@@ -42,11 +42,14 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client)
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
 * **done** - when there's no submited job more waiting for state CREATED
-* **error** - when an error occured, typically a transfer problem or malformed data, has parameter **Error**
+* **js_error** - when the Job Server encounters an error and needs to notify client
+* **error** - when an error occured (e.g. illegal client's state, malformed data, socket problem, ...), has parameter **Error**
 
 ## Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned
-* **status** - TODO describe it
+* **status** - to update status information of a submitted jobs
+ * in response to a client's request for a **background** job
+ * status update propagated from worker to client in case of a **non-background** job.
 * **complete** - when the non-background job completed successfully
 * **timeout** - when the job has been canceled due to timeout - TODO
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client
