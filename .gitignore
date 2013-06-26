@@ -12,6 +12,7 @@ logs
 results
 
 npm-debug.log
+experiment.js
 
 node_modules
 gearmanode.sublime-*
