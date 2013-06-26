@@ -1,6 +1,7 @@
 var should     = require('should'),
     gearmanode = require('../lib/gearmanode'),
     Client     = gearmanode.Client,
+    Job        = gearmanode.Job,
     JobServer  = require('../lib/gearmanode/job-server').JobServer;
 
 
@@ -55,6 +56,20 @@ describe('Client', function() {
             c.jobServers[1].should.be.an.instanceof(JobServer);
             c.jobServers[1].host.should.equal('localhost');
             c.jobServers[1].port.should.equal(4444);
+        })
+    })
+
+
+
+    describe('#close', function() {
+        it('should clean up object', function() {
+            var c = gearmanode.client();
+            c.jobs['H:lima:207'] = new Job({ name: 'reverse', payload: 'hi' }); // mock the jobs
+            Object.keys(c.jobs).length.should.equal(1);
+            c.close();
+            c.closed.should.be.true;
+            Object.keys(c.jobs).length.should.equal(0);
+            c.jobServers.length.should.equal(1);
         })
     })
 

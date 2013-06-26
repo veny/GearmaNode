@@ -11,7 +11,7 @@ var gearmanode = require('../lib/gearmanode'),
 // client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
 //     job.on('complete', function() {
 //         console.log("RESULT >>> " + job.response);
-//         client.end();
+//         client.close();
 //     });
 // })
 
@@ -24,7 +24,7 @@ var gearmanode = require('../lib/gearmanode'),
 //     });
 //     job.on('complete', function() {
 //         console.log("RESULT >>> " + job.response);
-//         client.end();
+//         client.close();
 //     });
 // })
 
@@ -41,7 +41,7 @@ client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err
     });
     job.on('status', function(result) {
         console.log('--- result: ' + util.inspect(result));
-        client.end();
+        client.close();
     });
 })
 
@@ -56,11 +56,11 @@ client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err
 //         // If on of the BG versions is used, the client is not updated with
 //         // status or notified when the job has completed (it is detached).
 //         if (job.background) {
-//             c.end();
+//             c.close();
 //         }
 //     });
 //     job.on('complete', function() {
 //         console.log('--- Job#complete - ' + job.toString() + " >>> " + job.response);
-//         c.end();
+//         c.close();
 //     });
 // })

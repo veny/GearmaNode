@@ -54,7 +54,7 @@ describe('Job', function() {
 
 
     describe('#close', function() {
-        it('should clean up job', function(done) {
+        it('should clean up object', function(done) {
             var job = new Job({ name: 'reverse', payload: 'hi' });
             job.client = { jobs: [] }; // mock the real Client object with an object literal
             job.on('close', function() {
@@ -92,7 +92,7 @@ describe('Job', function() {
             var buff = job.encode();
             buff.should.be.an.instanceof(Buffer);
             buff.length.should.equal(23);
-            job.handle = 'H:lima:207';
+            job.handle = 'H:lima:207'; // mock the job's handle
             buff = job.encode(protocol.PACKET_TYPES.GET_STATUS);
             buff.should.be.an.instanceof(Buffer);
             buff.length.should.equal(22);
