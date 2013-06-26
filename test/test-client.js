@@ -11,6 +11,7 @@ describe('Client', function() {
         it('should return instance of Client', function() {
             var c = gearmanode.client();
             c.should.be.an.instanceof(Client);
+            should.exist(c.jobServers);
             should.exist(c.jobs);
         })
         it('should return error when an unknown option found', function() {
@@ -39,6 +40,10 @@ describe('Client', function() {
         it('should return error when servers not/empty array', function() {
             gearmanode.client({ servers: 1 }).should.be.an.instanceof(Error);
             gearmanode.client({ servers: [] }).should.be.an.instanceof(Error);
+        })
+        it('should return error when servers are duplicate', function() {
+            var c = gearmanode.client({ servers: [{host: 'localhost'}, {host: 'localhost'}] });
+            c.should.be.an.instanceof(Error);
         })
         it('should return client with corresponding job servers', function() {
             var c = gearmanode.client({ servers: [{ host: 'foo.com'}, { port: 4444 }] });
