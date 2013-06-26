@@ -56,13 +56,13 @@ describe('Job', function() {
     describe('#abort', function() {
         it('should clean up job', function(done) {
             var job = new Job({ name: 'reverse', payload: 'hi' });
-            job.on('aborted', function() {
+            job.on('close', function() {
                 job.processing.should.be.false;
                 should.not.exist(job.handle);
                 should.not.exist(job.jobServer);
                 done();
             })
-            job.abort();
+            job.close();
         })
     })
 

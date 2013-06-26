@@ -1,7 +1,7 @@
-var should      = require('should'),
-    gearmanode  = require('../lib/gearmanode'),
-    Client      = gearmanode.Client,
-    JobServer   = require('../lib/gearmanode/job-server').JobServer;
+var should     = require('should'),
+    gearmanode = require('../lib/gearmanode'),
+    Client     = gearmanode.Client,
+    JobServer  = require('../lib/gearmanode/job-server').JobServer;
 
 
 describe('Client', function() {
@@ -13,6 +13,7 @@ describe('Client', function() {
             c.should.be.an.instanceof(Client);
             should.exist(c.jobServers);
             should.exist(c.jobs);
+            Object.keys(c.jobs).length.should.equal(0);
         })
         it('should return error when an unknown option found', function() {
             gearmanode.client({ pipapo: 1 }).should.be.an.instanceof(Error);

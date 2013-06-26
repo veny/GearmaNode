@@ -13,7 +13,6 @@ describe('JobServer', function() {
             js.connected.should.be.false;
             should.not.exist(js.socket);
             js.jobsWaiting4Created.length.should.equal(0);
-            Object.keys(js.jobsWaiting4Complete).length.should.equal(0);
             js.getUid().should.equal('localhost:4730');
         })
         it('should return error when missing mandatory options', function() {
@@ -60,7 +59,6 @@ describe('JobServer', function() {
                 js.connected.should.be.false;
                 should.not.exist(js.socket);
                 js.jobsWaiting4Created.length.should.equal(0);
-                Object.keys(js.jobsWaiting4Complete).length.should.equal(0);
                 done();
             })
         })
@@ -82,6 +80,7 @@ describe('JobServer', function() {
                 var j = new Job({ name: 'reverse', payload: 'hi'});
                 js.jobsWaiting4Created.length.should.equal(0);
                 j.processing.should.be.false;
+                js.client = { jobs: [], emit: function() {} }; // mock the real Client object with an object literal
                 js.submit(j, function(err) {
                     js.jobsWaiting4Created.length.should.equal(1);
                     js.jobsWaiting4Created[0].should.equal(j);
@@ -94,6 +93,7 @@ describe('JobServer', function() {
         it('should call success callback if submiting OK', function(done) {
             js.connect(function () {
                 var j = new Job({ name: 'reverse', payload: 'hi'});
+                js.client = { jobs: [], emit: function() {} }; // mock the real Client object with an object literal
                 js.submit(j, function(err) {
                     should.not.exist(err);
                     done();
