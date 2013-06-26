@@ -53,13 +53,14 @@ describe('Job', function() {
     })
 
 
-    describe('#abort', function() {
+    describe('#close', function() {
         it('should clean up job', function(done) {
             var job = new Job({ name: 'reverse', payload: 'hi' });
+            job.client = { jobs: [] }; // mock the real Client object with an object literal
             job.on('close', function() {
                 job.processing.should.be.false;
-                should.not.exist(job.handle);
-                should.not.exist(job.jobServer);
+                job.closed.should.be.true;
+                should.not.exist(job.client);
                 done();
             })
             job.close();
@@ -81,6 +82,20 @@ describe('Job', function() {
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
             job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'HIGH'  });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
+        })
+    })
+
+
+    describe('#encode', function() {
+        it('should return buffer of bytes', function() {
+            var job = new Job({ name: 'reverse', payload: 'hi' });
+            var buff = job.encode();
+            buff.should.be.an.instanceof(Buffer);
+            buff.length.should.equal(23);
+            job.handle = 'H:lima:207';
+            buff = job.encode(protocol.PACKET_TYPES.GET_STATUS);
+            buff.should.be.an.instanceof(Buffer);
+            buff.length.should.equal(22);
         })
     })
 
