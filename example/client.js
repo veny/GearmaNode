@@ -7,7 +7,7 @@ var gearmanode = require('../lib/gearmanode'),
 
 
 // simplest sample for README.md - foreground job waiting for completition
-var client = gearmanode.client(); // by default expects job server on localhost:4730
+var client = gearmanode.client({port:4370}); // by default expects job server on localhost:4730
 client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
     job.on('complete', function() {
         console.log("RESULT >>> " + job.response);

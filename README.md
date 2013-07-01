@@ -38,11 +38,11 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 
 ## Client events
-* **connect** - when a job server connected (physical connection is lazy opened by first submit)
-* **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client)
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
 * **done** - when there's no submited job more waiting for state CREATED
-* **js_error** - when the Job Server encounters an error and needs to notify client
+* **js_connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
+* **js_disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
+* **js_error** - when the Job Server encounters an error and needs to notify client TODO
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...), has parameter **Error**
 
 ## Job events
