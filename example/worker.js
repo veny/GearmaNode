@@ -4,4 +4,4 @@ var gearmanode = require('../lib/gearmanode'),
 
 
 var worker = gearmanode.worker();
-worker.addFuntion('reverse');
+worker.addFuntion('reverse', function () {});

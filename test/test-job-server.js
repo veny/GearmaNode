@@ -9,7 +9,7 @@ var should    = require('should'),
 
 var defaultJobServerWithMockedClient = function () {
     var js = new JobServer({ host: 'localhost', port: 4730 });
-    js.client = { jobs: [], emit: sinon.spy() };
+    js.mate = { jobs: [], emit: sinon.spy() };
     return js;
 }
 
@@ -63,8 +63,8 @@ describe('JobServer', function() {
         it('should emit event on client when connection OK', function(done) {
             var js = defaultJobServerWithMockedClient();
             js.connect(function() {
-                js.client.emit.called.should.be.true;
-                js.client.emit.calledWith('js_connect').should.be.true;
+                js.mate.emit.called.should.be.true;
+                js.mate.emit.calledWith('js_connect').should.be.true;
                 done();
             })
         })
@@ -98,7 +98,7 @@ describe('JobServer', function() {
         it('should emit event on client', function(done) {
             var js = defaultJobServerWithMockedClient();
             js.connect(function() {
-                var clientBackup = js.client;
+                var clientBackup = js.mate;
                 js.disconnect();
                 clientBackup.emit.called.should.be.true;
                 clientBackup.emit.calledWith('js_disconnect').should.be.true;
@@ -116,8 +116,6 @@ describe('JobServer', function() {
             js.send(hiPacket, 'ascii', function(err) {
                 should.not.exist(err);
                 js.connect.calledOnce.should.be.true;
-                js.connected.should.be.true;
-                js.client.emit.called.should.be.true;
                 done();
             })
         })
@@ -148,7 +146,7 @@ describe('JobServer', function() {
                 done();
             })
         })
-        it('should call error callback when invalid paramaters', function() {
+        it('should call error callback when data not a Buffer', function() {
             var js = defaultJobServerWithMockedClient();
             js.send('TEXT NOT ALLOWED', 'ascii', function(err) {
                 should.exist(err);
@@ -156,43 +154,5 @@ describe('JobServer', function() {
             })
         })
     })
-
-
-    // describe('#submit', function() {
-    //     var js = new JobServer({ host: 'localhost', port: 4730 });
-    //     it('should fail when not connected before', function(done) {
-    //         js.submit(new Job({ name: 'reverse', payload: 'hi'}), function(err) {
-    //             js.connected.should.be.false;
-    //             should.exist(err);
-    //             err.should.be.an.instanceof(Error);
-    //             done();
-    //         })
-    //     })
-    //     it('should set many managing values', function(done) {
-    //         js.connect(function () {
-    //             var j = new Job({ name: 'reverse', payload: 'hi'});
-    //             js.jobsWaiting4Created.length.should.equal(0);
-    //             j.processing.should.be.false;
-    //             js.client = { jobs: [], emit: function() {} }; // mock the real Client object with an object literal
-    //             js.submit(j, function(err) {
-    //                 js.jobsWaiting4Created.length.should.equal(1);
-    //                 js.jobsWaiting4Created[0].should.equal(j);
-    //                 j.processing.should.be.true;
-    //                 j.jobServerUid.should.equal(js.getUid());
-    //                 done();
-    //             })
-    //         })
-    //     })
-    //     it('should call success callback if submiting OK', function(done) {
-    //         js.connect(function () {
-    //             var j = new Job({ name: 'reverse', payload: 'hi'});
-    //             js.client = { jobs: [], emit: function() {} }; // mock the real Client object with an object literal
-    //             js.submit(j, function(err) {
-    //                 should.not.exist(err);
-    //                 done();
-    //             })
-    //         })
-    //     })
-    // })
 
 })

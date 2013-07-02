@@ -60,7 +60,6 @@ describe('Client', function() {
     })
 
 
-
     describe('#close', function() {
         it('should clean up object', function() {
             var c = gearmanode.client();
@@ -70,6 +69,40 @@ describe('Client', function() {
             c.closed.should.be.true;
             Object.keys(c.jobs).length.should.equal(0);
             c.jobServers.length.should.equal(1);
+        })
+    })
+
+
+    describe('#submit', function() {
+        it('should set many managing values', function(done) {
+            var c = gearmanode.client();
+            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
+                var js = c.jobServers[0];
+                js.jobsWaiting4Created.length.should.equal(1);
+                js.jobsWaiting4Created[0].should.equal(job);
+                job.processing.should.be.true;
+                job.jobServerUid.should.equal(js.getUid());
+                done();
+            })
+        })
+        it('should call success callback if submiting OK', function(done) {
+            var c = gearmanode.client();
+            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
+                should.not.exist(err);
+                should.exist(job);
+                job.should.be.an.instanceof(Job);
+                done();
+            })
+        })
+        it('should call error callback if submiting fails', function(done) {
+            var c = gearmanode.client({port: 1});
+            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
+                should.exist(err);
+                err.should.be.an.instanceof(Error);
+                should.exist(job);
+                job.should.be.an.instanceof(Job);
+                done();
+            })
         })
     })
 

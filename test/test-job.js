@@ -85,18 +85,4 @@ describe('Job', function() {
         })
     })
 
-
-    describe('#encode', function() {
-        it('should return buffer of bytes', function() {
-            var job = new Job({ name: 'reverse', payload: 'hi' });
-            var buff = job.encode();
-            buff.should.be.an.instanceof(Buffer);
-            buff.length.should.equal(23);
-            job.handle = 'H:lima:207'; // mock the job's handle
-            buff = job.encode(protocol.PACKET_TYPES.GET_STATUS);
-            buff.should.be.an.instanceof(Buffer);
-            buff.length.should.equal(22);
-        })
-    })
-
 })
