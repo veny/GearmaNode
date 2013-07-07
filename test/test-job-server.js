@@ -113,7 +113,7 @@ describe('JobServer', function() {
         it('should autoconnect when not connected before', function(done) {
             var js = defaultJobServerWithMockedClient();
             js.connect = sinon.spy(js, 'connect');
-            js.send(hiPacket, 'ascii', function(err) {
+            js.send(hiPacket, function(err) {
                 should.not.exist(err);
                 js.connect.calledOnce.should.be.true;
                 done();
@@ -124,7 +124,7 @@ describe('JobServer', function() {
             js.connect = sinon.spy(js, 'connect');
             js.connect(function() {
                 js.connect.callCount.should.be.equal(1);
-                js.send(hiPacket, 'ascii', function() {
+                js.send(hiPacket, function() {
                     js.connect.callCount.should.be.equal(1);
                     done();
                 })
@@ -132,14 +132,14 @@ describe('JobServer', function() {
         })
         it('should call success callback when sending OK', function(done) {
             var js = defaultJobServerWithMockedClient();
-            js.send(hiPacket, 'ascii', function(err) {
+            js.send(hiPacket, function(err) {
                 should.not.exist(err);
                 done();
             })
         })
         it('should call error callback when sending fails', function(done) {
             var js = new JobServer({ host: 'localhost', port: 1 });
-            js.send(hiPacket, 'ascii', function(err) {
+            js.send(hiPacket, function(err) {
                 should.exist(err);
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
