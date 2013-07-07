@@ -55,3 +55,8 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **complete** - when the non-background job completed successfully
 * **timeout** - when the job has been canceled due to timeout - TODO
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client
+
+## Worker
+A function the worker is able to perform can be registered via ''worker#addFunction(name, callback, options)''
+where ''name'' is a symbolic name of the function, ''callback'' is a function to be run when a job will be received
+and ''options'' are additional options.
