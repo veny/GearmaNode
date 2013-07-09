@@ -9,7 +9,7 @@ var should    = require('should'),
 
 var defaultJobServerWithMockedClient = function () {
     var js = new JobServer({ host: 'localhost', port: 4730 });
-    js.mate = { jobs: [], emit: sinon.spy() };
+    js.clientOrWorker = { jobs: [], emit: sinon.spy() };
     return js;
 }
 
@@ -63,8 +63,8 @@ describe('JobServer', function() {
         it('should emit event on client when connection OK', function(done) {
             var js = defaultJobServerWithMockedClient();
             js.connect(function() {
-                js.mate.emit.called.should.be.true;
-                js.mate.emit.calledWith('js_connect').should.be.true;
+                js.clientOrWorker.emit.called.should.be.true;
+                js.clientOrWorker.emit.calledWith('js_connect').should.be.true;
                 done();
             })
         })
@@ -98,7 +98,7 @@ describe('JobServer', function() {
         it('should emit event on client', function(done) {
             var js = defaultJobServerWithMockedClient();
             js.connect(function() {
-                var clientBackup = js.mate;
+                var clientBackup = js.clientOrWorker;
                 js.disconnect();
                 clientBackup.emit.called.should.be.true;
                 clientBackup.emit.calledWith('js_disconnect').should.be.true;

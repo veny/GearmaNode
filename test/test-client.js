@@ -9,9 +9,10 @@ describe('Client', function() {
 
 
     describe('#factory', function() {
-        it('should return instance of Client', function() {
+        it('should return default instance of Client', function() {
             var c = gearmanode.client();
             c.should.be.an.instanceof(Client);
+            c._type.should.equal('Client');
             should.exist(c.jobServers);
             should.exist(c.jobs);
             Object.keys(c.jobs).length.should.equal(0);
@@ -63,7 +64,7 @@ describe('Client', function() {
     describe('#close', function() {
         it('should clean up object', function() {
             var c = gearmanode.client();
-            c.jobs['H:lima:207'] = new Job({ name: 'reverse', payload: 'hi' }); // mock the jobs
+            c.jobs['H:lima:207'] = new Job(c, { name: 'reverse', payload: 'hi' }); // mock the jobs
             Object.keys(c.jobs).length.should.equal(1);
             c.close();
             c.closed.should.be.true;

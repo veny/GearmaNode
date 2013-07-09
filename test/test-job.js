@@ -1,15 +1,17 @@
-var should   = require('should'),
-    Job      = require('../lib/gearmanode/job').Job,
-    protocol = require('../lib/gearmanode/protocol');
+var should     = require('should'),
+    gearmanode = require('../lib/gearmanode'),
+    Job        = require('../lib/gearmanode/job').Job,
+    protocol   = require('../lib/gearmanode/protocol');
 
 
 describe('Job', function() {
-
+    var client = gearmanode.client();
 
     describe('#constructor', function() {
         it('should return default instance of Job', function() {
-            var job = new Job({ name: 'reverse', payload: 'hi' });
+            var job = new Job(client, { name: 'reverse', payload: 'hi' });
             job.should.be.an.instanceof(Job);
+            job.clientOrWorker.should.be.an.instanceof(gearmanode.Client);
             job.name.should.equal('reverse');
             job.payload.should.equal('hi');
             job.background.should.be.false;
@@ -18,7 +20,7 @@ describe('Job', function() {
             should.not.exist(job.jobServer);
         })
         it('should return special instance of Job', function() {
-            var job = new Job(
+            var job = new Job(client,
                 { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH', encoding: 'ascii' }
             );
             job.should.be.an.instanceof(Job);
@@ -55,12 +57,16 @@ describe('Job', function() {
 
     describe('#close', function() {
         it('should clean up object', function(done) {
-            var job = new Job({ name: 'reverse', payload: 'hi' });
-            job.client = { jobs: [] }; // mock the real Client object with an object literal
+            var c = gearmanode.client();
+            var job = new Job(client, { name: 'reverse', payload: 'hi' });
+            job.handle = 'H:localhost:22';
+            job.clientOrWorker = c;
+            job.clientOrWorker.jobs[job.handle] = job;
             job.on('close', function() {
                 job.processing.should.be.false;
                 job.closed.should.be.true;
-                should.not.exist(job.client);
+                should.not.exist(c.jobs[job.handle]);
+                should.not.exist(job.clientOrWorker);
                 done();
             })
             job.close();
@@ -69,18 +75,18 @@ describe('Job', function() {
 
 
     describe('#getPacketType', function() {
-        it('should return instance of Socket', function() {
-            var job = new Job({ name: 'reverse', payload: 'hi' });
+        it('should return correct packet type', function() {
+            var job = new Job(client, { name: 'reverse', payload: 'hi' });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB);
-            job = new Job({ name: 'reverse', payload: 'hi', priority: 'LOW' });
+            job = new Job(client, { name: 'reverse', payload: 'hi', priority: 'LOW' });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_LOW);
-            job = new Job({ name: 'reverse', payload: 'hi', priority: 'HIGH'  });
+            job = new Job(client, { name: 'reverse', payload: 'hi', priority: 'HIGH'  });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_HIGH);
-            job = new Job({ name: 'reverse', payload: 'hi', background: true });
+            job = new Job(client, { name: 'reverse', payload: 'hi', background: true });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_BG);
-            job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'LOW' });
+            job = new Job(client, { name: 'reverse', payload: 'hi', background: true, priority: 'LOW' });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_LOW_BG);
-            job = new Job({ name: 'reverse', payload: 'hi', background: true, priority: 'HIGH'  });
+            job = new Job(client, { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH'  });
             job.getPacketType().should.equal(protocol.PACKET_TYPES.SUBMIT_JOB_HIGH_BG);
         })
     })
