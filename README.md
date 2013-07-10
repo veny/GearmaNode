@@ -48,15 +48,23 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...), has parameter **Error**
 
 ## Job events
-* **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned
-* **status** - to update status information of a submitted jobs
+* **error** - when communication with job server failed [Client/Worker]
+* **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
+* **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
 * **complete** - when the non-background job completed successfully
 * **timeout** - when the job has been canceled due to timeout - TODO
-* **close** - when Job#close() called or when the job forcible closed by shutdown of client
+* **close** - when Job#close() called or when the job forcible closed by shutdown of client [Client/Worker]
 
 ## Worker
+
+    var worker = gearmanode.worker();
+    worker.addFuntion('reverse', function (job) {
+        var rslt = job.payload.split("").reverse().join("");
+        job.workComplete(rslt);
+    });
+
 A function the worker is able to perform can be registered via ''worker#addFunction(name, callback, options)''
 where ''name'' is a symbolic name of the function, ''callback'' is a function to be run when a job will be received
 and ''options'' are additional options.
