@@ -69,14 +69,19 @@ A function the worker is able to perform can be registered via `worker#addFuncti
 where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
 and `options` are additional options.
 
-The worker function `callback` gets parameter `job` which is an interface to turn over assigned job
-and report job information to the job server. `job` object has following methods:
+The worker function `callback` gets parameter `job` which is:
+
+* job event emitter (see **Job events**)
+* value object to turn over job's parameters
+* interface to send job notification/information to the job server
+
+The `job` object has methods as follows:
 
 * name - getter for name of the function
 * jobServerUid - getter for unique identification of job server that transmited the job
 * handle - getter for job's handle
 * payload - getter for received data (Buffer or String)
-* sendWorkComplete - sends a notification to the server (and any listening clients) the that job completed successfully
+* sendWorkComplete - sends a notification to the server (and any listening clients) that the job completed successfully
 * reportStatus - reports job's status to the job server
 * reportWarning - sends a warning explicitly to the job server
 * reportError - to indicate that the job failed
