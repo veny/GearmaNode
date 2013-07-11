@@ -8,7 +8,6 @@ worker.addFuntion('reverse', function (job) {
     var rslt = job.payload.split("").reverse().join("");
     job.workComplete(rslt);
 });
-worker.removeFuntion('reverse');
 
 // var worker = gearmanode.worker();
 // worker.addFuntion('sleep', function (job) {
