@@ -53,9 +53,9 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
-* **complete** - when the non-background job completed successfully
-* **timeout** - when the job has been canceled due to timeout - TODO
-* **close** - when Job#close() called or when the job forcible closed by shutdown of client [Client/Worker]
+* **complete** - when the non-background job completed successfully [Client]
+* **timeout** - when the job has been canceled due to timeout [Client/Worker]
+* **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 
 ## Worker
 
@@ -65,6 +65,6 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
         job.workComplete(rslt);
     });
 
-A function the worker is able to perform can be registered via ''worker#addFunction(name, callback, options)''
-where ''name'' is a symbolic name of the function, ''callback'' is a function to be run when a job will be received
-and ''options'' are additional options.
+A function the worker is able to perform can be registered via `worker#addFunction(name, callback, options)`
+where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
+and `options` are additional options.
