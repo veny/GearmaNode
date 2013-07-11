@@ -68,3 +68,22 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 A function the worker is able to perform can be registered via `worker#addFunction(name, callback, options)`
 where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
 and `options` are additional options.
+
+The worker function `callback` gets parameter `job` which is an interface to turn over assigned job
+and report job information to the job server. `job` object has following methods:
+
+* name - getter for name of the function
+* jobServerUid - getter for unique identification of job server that transmited the job
+* handle - getter for job's handle
+* payload - getter for received data (Buffer or String)
+* sendWorkComplete - sends a notification to the server (and any listening clients) the that job completed successfully
+* reportStatus - reports job's status to the job server
+* reportWarning - sends a warning explicitly to the job server
+* reportError - to indicate that the job failed
+* sendData - send data before job completes
+
+The `options` can be:
+
+* timeout - the timeout value, the job server will mark the job as failed and notify any listening clients
+* withUnique - boolean flag whether a job will be grabbed with the client assigned unique ID
+* toStringEncoding - if given received payload will be converted to String with this encoding, otherwise payload turned over as Buffer
