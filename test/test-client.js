@@ -34,7 +34,6 @@ describe('Client', function() {
             c.close();
             c.closed.should.be.true;
             Object.keys(c.jobs).length.should.equal(0);
-            c.jobServers.length.should.equal(1);
         })
     })
 

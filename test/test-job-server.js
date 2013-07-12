@@ -101,7 +101,7 @@ describe('JobServer', function() {
                 var clientBackup = js.clientOrWorker;
                 js.disconnect();
                 clientBackup.emit.called.should.be.true;
-                clientBackup.emit.calledWith('js_disconnect').should.be.true;
+                clientBackup.emit.calledWith('disconnect').should.be.true;
                 done();
             })
         })
