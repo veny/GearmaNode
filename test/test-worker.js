@@ -1,4 +1,5 @@
 var should     = require('should'),
+    sinon      = require('sinon'),
     gearmanode = require('../lib/gearmanode'),
     Worker     = gearmanode.Worker,
     Job        = gearmanode.Job,
@@ -9,6 +10,8 @@ describe('Worker', function() {
     var w;
     beforeEach(function() {
         w = gearmanode.worker();
+        w._sendWithJobServer = sinon.spy();
+        w._preSleep = sinon.spy();
     });
 
 
@@ -34,17 +37,16 @@ describe('Worker', function() {
     })
 
 
-    // describe('#submit', function() {
-    //     it('should set many managing values', function(done) {
-    //         c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
-    //             var js = c.jobServers[0];
-    //             js.jobsWaiting4Created.length.should.equal(1);
-    //             js.jobsWaiting4Created[0].should.equal(job);
-    //             job.processing.should.be.true;
-    //             job.jobServerUid.should.equal(js.getUid());
-    //             done();
-    //         })
-    //     })
+    describe('#addFuntion', function() {
+        it('should set many managing values', function() {
+            w.addFuntion('reverse', function() {});
+            Object.keys(w.functions).length.should.equal(1);
+            should.exist(w.functions.reverse);
+            w.functions.reverse.should.be.an.instanceof(Array);
+            w.functions.reverse[0].should.be.an.instanceof(Function);
+            w._sendWithJobServer.calledOnce.should.be.true;
+            w._preSleep.calledOnce.should.be.true;
+        })
     //     it('should call success callback if submiting OK', function(done) {
     //         c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
     //             should.not.exist(err);
@@ -63,6 +65,6 @@ describe('Worker', function() {
     //             done();
     //         })
     //     })
-    // })
+    })
 
 })
