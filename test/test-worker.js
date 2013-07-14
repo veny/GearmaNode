@@ -47,24 +47,34 @@ describe('Worker', function() {
             w._sendWithJobServer.calledOnce.should.be.true;
             w._preSleep.calledOnce.should.be.true;
         })
-    //     it('should call success callback if submiting OK', function(done) {
-    //         c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
-    //             should.not.exist(err);
-    //             should.exist(job);
-    //             job.should.be.an.instanceof(Job);
-    //             done();
-    //         })
-    //     })
-    //     it('should call error callback if submiting fails', function(done) {
-    //         var c = gearmanode.client({port: 1});
-    //         c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
-    //             should.exist(err);
-    //             err.should.be.an.instanceof(Error);
-    //             should.exist(job);
-    //             job.should.be.an.instanceof(Job);
-    //             done();
-    //         })
-    //     })
+        it('should return error when invalid function name', function() {
+            w.addFuntion(undefined, function() {}).should.be.an.instanceof(Error);
+            w.addFuntion(null, function() {}).should.be.an.instanceof(Error);
+            w.addFuntion('', function() {}).should.be.an.instanceof(Error);
+        })
+        it('should return error when no callback given', function() {
+            w.addFuntion('reverse').should.be.an.instanceof(Error);
+        })
+    })
+
+
+    describe('#removeFuntion', function() {
+        it('should set many managing values', function() {
+            w.addFuntion('reverse', function() {});
+            w.removeFuntion('reverse');
+            Object.keys(w.functions).length.should.equal(0);
+            should.not.exist(w.functions.reverse);
+            w._sendWithJobServer.calledTwice.should.be.true; // addRunction + removeFunction
+        })
+        it('should return error when function name not known', function() {
+            w.addFuntion('foo', function() {});
+            w.removeFuntion('bar').should.be.an.instanceof(Error);
+        })
+        it('should return error when invalid function name', function() {
+            w.removeFuntion(undefined).should.be.an.instanceof(Error);
+            w.removeFuntion(null).should.be.an.instanceof(Error);
+            w.removeFuntion('').should.be.an.instanceof(Error);
+        })
     })
 
 })
