@@ -43,14 +43,26 @@ describe('Worker', function() {
             Object.keys(w.functions).length.should.equal(1);
             should.exist(w.functions.reverse);
             w.functions.reverse.should.be.an.instanceof(Array);
+            w.functions.reverse.length.should.equal(2);
             w.functions.reverse[0].should.be.an.instanceof(Function);
+            Object.keys(w.functions.reverse[1]).length.should.equal(0); // empty options: {}
             w._sendWithJobServer.calledOnce.should.be.true;
             w._preSleep.calledOnce.should.be.true;
+        })
+        it('should store additional options', function() {
+            w.addFuntion('reverse', function() {}, {timeout: 10, withUnique: true, toStringEncoding: 'ascii'});
+            Object.keys(w.functions.reverse[1]).length.should.equal(3);
+            w.functions.reverse[1].timeout.should.equal(10);
+            w.functions.reverse[1].withUnique.should.be.true;
+            w.functions.reverse[1].toStringEncoding.should.equal('ascii');
         })
         it('should return error when invalid function name', function() {
             w.addFuntion(undefined, function() {}).should.be.an.instanceof(Error);
             w.addFuntion(null, function() {}).should.be.an.instanceof(Error);
             w.addFuntion('', function() {}).should.be.an.instanceof(Error);
+        })
+        it('should return error when invalid options', function() {
+            w.addFuntion('foo', function() {}, {foo: true}).should.be.an.instanceof(Error);
         })
         it('should return error when no callback given', function() {
             w.addFuntion('reverse').should.be.an.instanceof(Error);

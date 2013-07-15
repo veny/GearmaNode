@@ -5,9 +5,9 @@ var gearmanode = require('../lib/gearmanode');
 // simplest sample for README.md
 var worker = gearmanode.worker();
 worker.addFuntion('reverse', function (job) {
-    var rslt = job.payload.split("").reverse().join("");
+    var rslt = job.payload.toString().split("").reverse().join("");
     job.workComplete(rslt);
-});
+}, {toStringEncoding: 'ascii'});
 
 // var worker = gearmanode.worker();
 // worker.addFuntion('sleep', function (job) {
