@@ -63,6 +63,7 @@ describe('Worker', function() {
         })
         it('should return error when invalid options', function() {
             w.addFuntion('foo', function() {}, {foo: true}).should.be.an.instanceof(Error);
+            w.addFuntion('foo', function() {}, {toStringEncoding: 'InVaLiD'}).should.be.an.instanceof(Error);
         })
         it('should return error when no callback given', function() {
             w.addFuntion('reverse').should.be.an.instanceof(Error);

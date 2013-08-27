@@ -96,7 +96,7 @@ describe('common', function() {
             should.strictEqual(opts.alpha, 'bravo');
             opts.charly.should.equal(true);
         })
-
+ 
         // BF -----------------------------------
 
         it('should modify options when default value is boolean', function() {
@@ -105,6 +105,33 @@ describe('common', function() {
             Object.keys(opts).length.should.equal(2);
             opts.foo.should.equal(true);
             opts.bar.should.equal(false);
+        })
+    })
+
+
+    describe('#clone()', function() {
+        it('should clone a simple object', function() {
+            var from = {alpha: 'bravo', charly: 'delta'};
+            var cloned = common.clone(from);
+            from.should.not.equal(cloned);
+            Object.keys(cloned).length.should.equal(2);
+            cloned.alpha.should.equal('bravo');
+            cloned.charly.should.equal('delta');
+            from.foo = 'bar';
+            from.foo.should.equal('bar');
+            should.not.exist(cloned.foo);
+        })
+        it('should clone an Array', function() {
+            var from = ['first', 'second'];
+            var cloned = common.clone(from);
+            cloned.should.be.an.instanceof(Array);
+            from.should.not.equal(cloned);
+            cloned.length.should.equal(2);
+            cloned[0].should.equal('first');
+            cloned[1].should.equal('second');
+            from.push('third');
+            from.length.should.equal(3);
+            cloned.length.should.equal(2);
         })
     })
 

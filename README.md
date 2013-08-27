@@ -62,7 +62,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
     var worker = gearmanode.worker();
     worker.addFuntion('reverse', function (job) {
-        var rslt = job.payload.split("").reverse().join("");
+        var rslt = job.payload.toString().split("").reverse().join("");
         job.workComplete(rslt);
     });
 
@@ -91,5 +91,4 @@ The `job` object has methods as follows:
 The `options` can be:
 
 * timeout - the timeout value, the job server will mark the job as failed and notify any listening clients
-* withUnique - boolean flag whether a job will be grabbed with the client assigned unique ID
-* toStringEncoding - if given received payload will be converted to String with this encoding, otherwise payload turned over as Buffer
+* toStringEncoding - if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
