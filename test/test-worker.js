@@ -7,11 +7,12 @@ var should     = require('should'),
 
 
 describe('Worker', function() {
-    var w;
+    var w, j;
     beforeEach(function() {
         w = gearmanode.worker();
         w._sendWithJobServer = sinon.spy();
         w._preSleep = sinon.spy();
+        j = new Job(w, {handle: 'HANDLE', name: 'NAME', payload: 'PAYLOAD', jobServerUid: 'UID'});
     });
 
 
@@ -72,7 +73,7 @@ describe('Worker', function() {
 
 
     describe('#removeFuntion', function() {
-        it('should set many managing values', function() {
+        it('should unset many managing values', function() {
             w.addFuntion('reverse', function() {});
             w.removeFuntion('reverse');
             Object.keys(w.functions).length.should.equal(0);
@@ -87,6 +88,29 @@ describe('Worker', function() {
             w.removeFuntion(undefined).should.be.an.instanceof(Error);
             w.removeFuntion(null).should.be.an.instanceof(Error);
             w.removeFuntion('').should.be.an.instanceof(Error);
+        })
+    })
+
+
+    describe('#Job', function() {
+
+        describe('#workComplete', function() {
+            it('should send packets to job server', function() {
+                j.workComplete();
+                w._sendWithJobServer.calledOnce.should.be.true;
+                w._preSleep.calledOnce.should.be.true;
+                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+            })
+        })
+
+
+        describe('#reportStatus', function() {
+            it('should send packet to job server', function() {
+                j.reportStatus();
+                w._sendWithJobServer.calledOnce.should.be.true;
+                w._preSleep.calledOnce.should.be.true;
+                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+            })
         })
     })
 

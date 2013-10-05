@@ -58,6 +58,9 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **timeout** - when the job has been canceled due to timeout [Client/Worker]
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 
+## Worker events
+* **error** - when a fatal error occurred while processing job (e.g. communication with job server failed)
+
 ## Worker
 
     var worker = gearmanode.worker();
