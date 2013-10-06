@@ -11,7 +11,11 @@ var client = gearmanode.client(); // by default expects job server on localhost:
 client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
 //client.submitJob({ name: 'reverse', payload: 'žluťoučký kůň' }, function(err, job) { // by default foreground job with normal priority
     job.on('complete', function() {
-        console.log("RESULT >>> " + job.response);
+        console.log('RESULT >>> ' + job.response);
+        client.close();
+    });
+    job.on('failed', function() {
+        console.log('FAILURE >>> ' + job.handle);
         client.close();
     });
 })

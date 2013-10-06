@@ -55,6 +55,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
 * **complete** - when the non-background job completed successfully [Client]
+* **failed** - when a job has been canceled by invoking Job#reportError on worker side [Client]
 * **timeout** - when the job has been canceled due to timeout [Client/Worker]
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 
@@ -85,7 +86,7 @@ The `job` object has methods as follows:
 * jobServerUid - getter for unique identification of job server that transmited the job
 * handle - getter for job's handle
 * payload - getter for received data (Buffer or String)
-* sendWorkComplete - sends a notification to the server (and any listening clients) that the job completed successfully
+* workComplete - sends a notification to the server (and any listening clients) that the job completed successfully
 * reportStatus - reports job's status to the job server
 * reportWarning - sends a warning explicitly to the job server
 * reportError - to indicate that the job failed
