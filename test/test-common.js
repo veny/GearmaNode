@@ -80,7 +80,7 @@ describe('common', function() {
             // --
             opts = { alpha: true };
             rslt = common.verifyAndSanitizeOptions(opts, pattern);
-            opts.alpha.should.equal(true);
+            opts.alpha.should.be.true;
             opts.charly.should.equal('delta');
             // --
             opts = {};
@@ -94,7 +94,7 @@ describe('common', function() {
             var rslt = common.verifyAndSanitizeOptions(opts, pattern);
             Object.keys(opts).length.should.equal(2);
             should.strictEqual(opts.alpha, 'bravo');
-            opts.charly.should.equal(true);
+            opts.charly.should.be.true;
         })
  
         // BF -----------------------------------
@@ -103,8 +103,35 @@ describe('common', function() {
             var opts = {};
             var rslt = common.verifyAndSanitizeOptions(opts, { foo: true, bar: false });
             Object.keys(opts).length.should.equal(2);
-            opts.foo.should.equal(true);
-            opts.bar.should.equal(false);
+            opts.foo.should.be.true;
+            opts.bar.should.be.false;
+        })
+    })
+
+
+    describe('#isString()', function() {
+        it('should identify given object as a String', function() {
+            common.isString('string literal').should.be.true;
+            common.isString('    ').should.be.true;
+            common.isString(new String('String object')).should.be.true;
+            common.isString(1).should.be.false; // number literal
+            common.isString(true).should.be.false; // boolean literal
+            common.isString({}).should.be.false; // object
+            common.isString(null).should.be.false;
+            common.isString(undefined).should.be.false;
+        })
+    })
+
+
+    describe('#isNumber()', function() {
+        it('should identify given object as a Number', function() {
+            common.isNumber(5).should.be.true;
+            common.isNumber(new Number(5)).should.be.true;
+            common.isNumber('123').should.be.false; // string literal
+            common.isNumber(true).should.be.false; // boolean literal
+            common.isNumber({}).should.be.false; // object
+            common.isNumber(null).should.be.false;
+            common.isNumber(undefined).should.be.false;
         })
     })
 
