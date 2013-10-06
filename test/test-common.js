@@ -113,6 +113,7 @@ describe('common', function() {
         it('should identify given object as a String', function() {
             common.isString('string literal').should.be.true;
             common.isString('    ').should.be.true;
+            common.isString('').should.be.true;
             common.isString(new String('String object')).should.be.true;
             common.isString(1).should.be.false; // number literal
             common.isString(true).should.be.false; // boolean literal
@@ -127,6 +128,7 @@ describe('common', function() {
         it('should identify given object as a Number', function() {
             common.isNumber(5).should.be.true;
             common.isNumber(new Number(5)).should.be.true;
+            common.isNumber('').should.be.false;
             common.isNumber('123').should.be.false; // string literal
             common.isNumber(true).should.be.false; // boolean literal
             common.isNumber({}).should.be.false; // object

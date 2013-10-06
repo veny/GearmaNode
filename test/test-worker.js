@@ -106,10 +106,26 @@ describe('Worker', function() {
 
         describe('#reportStatus', function() {
             it('should send packet to job server', function() {
-                j.reportStatus();
+                j.reportStatus(1, 2);
                 w._sendWithJobServer.calledOnce.should.be.true;
-                w._preSleep.calledOnce.should.be.true;
-                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+            })
+            it('should validate given parameters', function() {
+                j.reportStatus().should.be.an.instanceof(Error);
+                j.reportStatus(1).should.be.an.instanceof(Error);
+                j.reportStatus(1, null).should.be.an.instanceof(Error);
+                j.reportStatus(1, '').should.be.an.instanceof(Error);
+                j.reportStatus('1', '2').should.be.an.instanceof(Error);
+                w._sendWithJobServer.called.should.be.false;
+            })
+        })
+
+
+        describe('#reportError', function() {
+            it('should send packet to job server', function() {
+                j.reportError();
+                w._sendWithJobServer.calledOnce.should.be.true;
+                j.closed.should.be.true;
+                should.not.exist(j.clientOrWorker);
             })
         })
     })
