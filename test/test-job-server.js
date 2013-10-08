@@ -108,6 +108,33 @@ describe('JobServer', function() {
     })
 
 
+    describe('#echo', function() {
+        it('should store callback for response', function() {
+            var js = defaultJobServerWithMockedClient();
+            js.echo('ping', function() {});
+            should.exist(js.echoCallback);
+        })
+        it('should return echoed data in response', function(done) {
+            var js = defaultJobServerWithMockedClient();
+            js.echo('ping', function(err, response) {
+                should.not.exist(js.echoCallback);
+                should.not.exist(err);
+                response.should.equal('ping');
+                done();
+            });
+        })
+        it('should return error when missing mandatory options', function() {
+            var js = defaultJobServerWithMockedClient();
+            js.echo().should.be.an.instanceof(Error);
+            js.echo('1').should.be.an.instanceof(Error);
+            js.echo(1).should.be.an.instanceof(Error);
+            js.echo(1, function() {}).should.be.an.instanceof(Error);
+            js.echo('1', '1').should.be.an.instanceof(Error);
+            should.not.exist(js.echo('1', function() {}));
+        })
+    })
+
+
     describe('#send', function() {
         var hiPacket = protocol.encodePacket(protocol.PACKET_TYPES.ECHO_REQ, 'ascii', ['hi']);
         it('should autoconnect when not connected before', function(done) {
