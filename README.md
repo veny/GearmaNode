@@ -90,6 +90,7 @@ The `job` object has methods as follows:
 * reportStatus - reports job's status to the job server
 * reportWarning - sends a warning explicitly to the job server
 * reportError - to indicate that the job failed
+* reportException - to indicate that the job failed with exception
 * sendData - send data before job completes
 
 The `options` can be:
