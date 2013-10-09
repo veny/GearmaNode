@@ -50,15 +50,16 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Job events
-* **error** - when communication with job server failed [Client/Worker]
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
 * **complete** - when the non-background job completed successfully [Client]
 * **failed** - when a job has been canceled by invoking Job#reportError on worker side [Client]
+* **exception** - when the job failed with the an exception, has parameter **text of exception** [Client]
 * **timeout** - when the job has been canceled due to timeout [Client/Worker]
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
+* **error** - when communication with job server failed [Client/Worker]
 
 ## Worker events
 * **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**

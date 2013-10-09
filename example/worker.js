@@ -30,6 +30,6 @@ var gearmanode = require('../lib/gearmanode');
 var worker = gearmanode.worker();
 worker.addFuntion('reverse', function (job) {
 //    job.reportError();
-    job.reportException('EXCEPTION');
+    job.reportException('delta alfa');
 //    job.workComplete('OIIUSHDF');
 });

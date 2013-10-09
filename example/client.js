@@ -8,6 +8,7 @@ var gearmanode = require('../lib/gearmanode'),
 
 // simplest sample for README.md - foreground job waiting for completition
 var client = gearmanode.client(); // by default expects job server on localhost:4730
+//client.jobServers[0].setOption('exceptions', function(){});
 client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
 //client.submitJob({ name: 'reverse', payload: 'žluťoučký kůň' }, function(err, job) { // by default foreground job with normal priority
     job.on('complete', function() {
@@ -16,6 +17,10 @@ client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job
     });
     job.on('failed', function() {
         console.log('FAILURE >>> ' + job.handle);
+        client.close();
+    });
+    job.on('exception', function(text) {
+        console.log('EXCEPTION >>> ' + text);
         client.close();
     });
 })
