@@ -82,12 +82,15 @@ The worker function `callback` gets parameter `job` which is:
 * value object to turn over job's parameters
 * interface to send job notification/information to the job server
 
-The `job` object has methods as follows:
+The `job` object has following getters
 
 * name - getter for name of the function
 * jobServerUid - getter for unique identification of job server that transmited the job
 * handle - getter for job's handle
 * payload - getter for received data (Buffer or String)
+
+and methods
+
 * workComplete - sends a notification to the server (and any listening clients) that the job completed successfully
 * reportStatus - reports job's status to the job server
 * reportWarning - sends a warning explicitly to the job server
@@ -99,6 +102,7 @@ The `options` can be:
 
 * timeout - the timeout value, the job server will mark the job as failed and notify any listening clients
 * toStringEncoding - if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
+
 
 ## Tests
 
