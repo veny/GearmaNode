@@ -14,6 +14,7 @@ Node.js library for the Gearman distributed job system.
 * load balancing strategy TODO
 * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server) TODO
 * support for miscellaneous string encoding supported by Node.js `Buffer` class
+* careful API documentation
 * rock solid tests
  * currently more than 60 test scenarios and 150 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
@@ -45,8 +46,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **done** - when there's no submited job more waiting for state CREATED
 * **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
 * **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
-* **js_error** - when the Job Server encounters an error and needs to notify client TODO
-* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...), has parameter **Error**
+* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Job events
 * **error** - when communication with job server failed [Client/Worker]
@@ -60,7 +60,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 
 ## Worker events
-* **error** - when a fatal error occurred while processing job (e.g. communication with job server failed)
+* **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Worker
 

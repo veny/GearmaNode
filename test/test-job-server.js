@@ -108,22 +108,13 @@ describe('JobServer', function() {
     })
 
 
-    describe('#echo', function() {
+    describe('#echo #setOption', function() {
         it('should store callback for response', function() {
             var js = defaultJobServerWithMockedClient();
             js.echo('ping', function() {});
-            should.exist(js.echoCallback);
+            should.exist(js.expectedJsResponseCallback);
         })
-        it('should return echoed data in response', function(done) {
-            var js = defaultJobServerWithMockedClient();
-            js.echo('ping', function(err, response) {
-                should.not.exist(js.echoCallback);
-                should.not.exist(err);
-                response.should.equal('ping');
-                done();
-            });
-        })
-        it('should return error when missing mandatory options', function() {
+        it('should return error when invalid options', function() {
             var js = defaultJobServerWithMockedClient();
             js.echo().should.be.an.instanceof(Error);
             js.echo('1').should.be.an.instanceof(Error);
@@ -131,6 +122,41 @@ describe('JobServer', function() {
             js.echo(1, function() {}).should.be.an.instanceof(Error);
             js.echo('1', '1').should.be.an.instanceof(Error);
             should.not.exist(js.echo('1', function() {}));
+        })
+    })
+
+
+    describe('#echo', function() {
+        it('should return echoed data in response', function(done) {
+            var js = defaultJobServerWithMockedClient();
+            js.echo('ping', function(err, response) {
+                should.not.exist(js.expectedJsResponseCallback);
+                should.not.exist(err);
+                response.should.equal('ping');
+                done();
+            });
+        })
+    })
+
+
+    describe('#setOption', function() {
+        it('should return name of the option that was set', function(done) {
+            var js = defaultJobServerWithMockedClient();
+            js.setOption('exceptions', function(err, response) {
+                should.not.exist(js.expectedJsResponseCallback);
+                should.not.exist(err);
+                response.should.equal('exceptions');
+                done();
+            });
+        })
+        it('should reply with error if option is unknown', function(done) {
+            var js = defaultJobServerWithMockedClient();
+            js.setOption('foo', function(err, response) {
+                should.not.exist(js.expectedJsResponseCallback);
+                should.not.exist(response);
+                err.should.be.an.instanceof(Error);
+                done();
+            });
         })
     })
 
