@@ -29,6 +29,7 @@ var gearmanode = require('../lib/gearmanode');
 // Job#reportError
 var worker = gearmanode.worker();
 worker.addFuntion('reverse', function (job) {
-    job.reportError();
+//    job.reportError();
+    job.reportException('EXCEPTION');
 //    job.workComplete('OIIUSHDF');
 });

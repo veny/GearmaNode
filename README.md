@@ -90,10 +90,26 @@ The `job` object has methods as follows:
 * reportStatus - reports job's status to the job server
 * reportWarning - sends a warning explicitly to the job server
 * reportError - to indicate that the job failed
-* reportException - to indicate that the job failed with exception
+* reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility)
 * sendData - send data before job completes
 
 The `options` can be:
 
 * timeout - the timeout value, the job server will mark the job as failed and notify any listening clients
 * toStringEncoding - if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
+
+## Tests
+
+    > cd /path/to/repository
+    > mocha
+
+Make sure before starting the tests:
+
+* job server is running on localhost:4730
+* `mocha` test framework is installed
+
+
+## Author
+
+* vaclav.sykora@gmail.com
+* https://plus.google.com/115674031373998885915

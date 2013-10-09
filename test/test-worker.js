@@ -94,6 +94,7 @@ describe('Worker', function() {
 
     describe('#Job', function() {
 
+
         describe('#workComplete', function() {
             it('should send packets to job server', function() {
                 j.workComplete();
@@ -125,6 +126,18 @@ describe('Worker', function() {
         describe('#reportError', function() {
             it('should send packet to job server', function() {
                 j.reportError();
+                w._sendWithJobServer.calledOnce.should.be.true;
+                w._preSleep.calledOnce.should.be.true;
+                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+                j.closed.should.be.true;
+                should.not.exist(j.clientOrWorker);
+            })
+        })
+
+
+        describe('#reportException', function() {
+            it('should send packet to job server', function() {
+                j.reportException('NullPointerException#something cannot be null');
                 w._sendWithJobServer.calledOnce.should.be.true;
                 w._preSleep.calledOnce.should.be.true;
                 w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
