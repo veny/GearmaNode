@@ -1,4 +1,5 @@
 var should     = require('should'),
+    sinon      = require('sinon'),
     gearmanode = require('../lib/gearmanode'),
     Client     = gearmanode.Client,
     Job        = gearmanode.Job,
@@ -6,9 +7,10 @@ var should     = require('should'),
 
 
 describe('Client', function() {
-    var c;
+    var c, js;
     beforeEach(function() {
         c = gearmanode.client();
+        js = c.jobServers[0];
     });
 
 
@@ -65,6 +67,34 @@ describe('Client', function() {
                 should.exist(job);
                 job.should.be.an.instanceof(Job);
                 done();
+            })
+        })
+    })
+
+
+    describe('#Job', function() {
+
+
+        describe('#getStatus', function() {
+            it('should send packet to job server', function() {
+                var j = new Job(c, {name: 'NAME', payload: 'PAYLOAD', background: true});
+                js.send = sinon.spy();
+                j.handle = 'HANDLE';
+                j.jobServerUid = js.getUid();
+                j.getStatus(function(err){});
+                js.send.calledOnce.should.be.true;
+            })
+            it('should validate job to be background', function() {
+                var j = new Job(c, {name: 'NAME', payload: 'PAYLOAD'});
+                js.send = sinon.spy();
+                j.getStatus(function(err) { err.should.be.an.instanceof(Error); })
+                j.background = true;
+                j.getStatus(function(err) { err.should.be.an.instanceof(Error); })
+                j.handle = 'HANDLE';
+                j.getStatus(function(err) { err.should.be.an.instanceof(Error); })
+                j.jobServerUid = js.getUid();
+                j.getStatus(function(err){});
+                js.send.calledOnce.should.be.true;
             })
         })
     })
