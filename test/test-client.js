@@ -41,31 +41,28 @@ describe('Client', function() {
 
 
     describe('#submit', function() {
-        it('should set many managing values', function(done) {
-            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
-                var js = c.jobServers[0];
-                js.jobsWaiting4Created.length.should.equal(1);
-                js.jobsWaiting4Created[0].should.equal(job);
-                job.processing.should.be.true;
-                job.jobServerUid.should.equal(js.getUid());
-                done();
-            })
+        it('should return job instance', function() {
+            var job = c.submitJob({name: 'reverse', payload: 'hi'});
+            should.exist(job);
+            job.should.be.an.instanceof(Job);
+            job.name.should.equal('reverse');
+            job.payload.should.equal('hi');
+            job.name.should.equal('reverse');
+            job.processing.should.be.true;
+            job.jobServerUid.should.equal(js.getUid());
         })
-        it('should call success callback if submiting OK', function(done) {
-            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
-                should.not.exist(err);
-                should.exist(job);
-                job.should.be.an.instanceof(Job);
-                done();
-            })
+        it('should set many managing values', function() {
+            var job = c.submitJob({name: 'reverse', payload: 'hi'});
+            var js = c.jobServers[0];
+            js.jobsWaiting4Created.length.should.equal(1);
+            js.jobsWaiting4Created[0].should.equal(job);
         })
-        it('should call error callback if submiting fails', function(done) {
+        it('should emit error if submiting fails', function(done) {
             var c = gearmanode.client({port: 1});
-            c.submitJob({name: 'reverse', payload: 'hi'}, function(err, job) {
+            c.submitJob({name: 'reverse', payload: 'hi'});
+            c.once('error', function(err) {
                 should.exist(err);
                 err.should.be.an.instanceof(Error);
-                should.exist(job);
-                job.should.be.an.instanceof(Job);
                 done();
             })
         })
