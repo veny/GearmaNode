@@ -81,7 +81,7 @@ describe('Client', function() {
                 js.send = sinon.spy();
                 j.handle = 'HANDLE';
                 j.jobServerUid = js.getUid();
-                j.getStatus(function(err){});
+                j.getStatus();
                 js.send.calledOnce.should.be.true;
             })
             it('should validate job to be background', function() {

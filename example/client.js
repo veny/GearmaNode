@@ -7,26 +7,26 @@ var gearmanode = require('../lib/gearmanode'),
 
 
 // simplest sample for README.md - foreground job waiting for completition
-var client = gearmanode.client(); // by default expects job server on localhost:4730
-//client.jobServers[0].setOption('exceptions', function(){});
-client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
-//client.submitJob({ name: 'reverse', payload: 'žluťoučký kůň' }, function(err, job) { // by default foreground job with normal priority
-    job.on('complete', function() {
-        console.log('RESULT >>> ' + job.response);
-        client.close();
-    });
-    job.on('failed', function() {
-        console.log('FAILURE >>> ' + job.handle);
-        client.close();
-    });
-    job.on('exception', function(text) {
-        console.log('EXCEPTION >>> ' + text);
-        client.close();
-    });
-})
+// var client = gearmanode.client(); // by default expects job server on localhost:4730
+// //client.jobServers[0].setOption('exceptions', function(){});
+// client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
+// //client.submitJob({ name: 'reverse', payload: 'žluťoučký kůň' }, function(err, job) { // by default foreground job with normal priority
+//     job.on('complete', function() {
+//         console.log('RESULT >>> ' + job.response);
+//         client.close();
+//     });
+//     job.on('failed', function() {
+//         console.log('FAILURE >>> ' + job.handle);
+//         client.close();
+//     });
+//     job.on('exception', function(text) {
+//         console.log('EXCEPTION >>> ' + text);
+//         client.close();
+//     });
+// })
 
 
-// simplest sample for README.md - foreground job receiving status update
+// foreground job receiving status update
 // var client = gearmanode.client();
 // client.submitJob({ name: 'sleep', payload: '3' }, function(err, job) {
 //     job.on('status', function(result) {
@@ -39,21 +39,22 @@ client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job
 // })
 
 
-// var timeout = 3000;
-// var client = gearmanode.client();
-// client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err, job) {
-//     job.on('created', function() {
-//         console.log('--- Job#created - ' + job.toString());
-//         console.log('--- waiting for wake-up ' + timeout + '[ms] ...')
-//         setTimeout((function() {
-//             client.getStatus(job, function(){});
-//         }), timeout);
-//     });
-//     job.on('status', function(result) {
-//         console.log('--- result: ' + util.inspect(result));
-//         client.close();
-//     });
-// })
+// background job asking for status
+var timeout = 3000;
+var client = gearmanode.client();
+client.submitJob({ name: 'sleep', payload: '5', background: true }, function(err, job) {
+    job.on('created', function() {
+        console.log('--- Job#created - ' + job.toString());
+        console.log('--- waiting for wake-up ' + timeout + '[ms] ...')
+        setTimeout((function() {
+            job.getStatus(function(err){console.log('=========== ' + err)});
+        }), timeout);
+    });
+    job.on('status', function(result) {
+        console.log('--- result: ' + util.inspect(result));
+        client.close();
+    });
+})
 
 
 // var c = gearmanode.client();
