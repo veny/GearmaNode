@@ -10,9 +10,10 @@ describe('Worker', function() {
     var w, j;
     beforeEach(function() {
         w = gearmanode.worker();
-        w._sendWithJobServer = sinon.spy();
+        w.jobServers[0].send = sinon.spy();
         w._preSleep = sinon.spy();
         j = new Job(w, {handle: 'HANDLE', name: 'NAME', payload: 'PAYLOAD', jobServerUid: 'UID'});
+        j.jobServerUid = w.jobServers[0].getUid();
     });
 
 
@@ -47,7 +48,7 @@ describe('Worker', function() {
             w.functions.reverse.length.should.equal(2);
             w.functions.reverse[0].should.be.an.instanceof(Function);
             Object.keys(w.functions.reverse[1]).length.should.equal(0); // empty options: {}
-            w._sendWithJobServer.calledOnce.should.be.true;
+            w.jobServers[0].send.calledOnce.should.be.true;
             w._preSleep.calledOnce.should.be.true;
         })
         it('should store additional options', function() {
@@ -73,12 +74,12 @@ describe('Worker', function() {
 
 
     describe('#removeFuntion', function() {
-        it('should unset many managing values', function() {
-            w.addFuntion('reverse', function() {});
+        it('should unset many managing values', function() { 
+           w.addFuntion('reverse', function() {});
             w.removeFuntion('reverse');
             Object.keys(w.functions).length.should.equal(0);
             should.not.exist(w.functions.reverse);
-            w._sendWithJobServer.calledTwice.should.be.true; // addRunction + removeFunction
+            w.jobServers[0].send.calledTwice.should.be.true; // addRunction + removeFunction
         })
         it('should return error when function name not known', function() {
             w.addFuntion('foo', function() {});
@@ -98,9 +99,9 @@ describe('Worker', function() {
         describe('#workComplete', function() {
             it('should send packets to job server', function() {
                 j.workComplete();
-                w._sendWithJobServer.calledOnce.should.be.true;
+                w.jobServers[0].send.calledOnce.should.be.true;
                 w._preSleep.calledOnce.should.be.true;
-                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+                w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
                 should.not.exist(j.clientOrWorker);
             })
@@ -110,7 +111,7 @@ describe('Worker', function() {
         describe('#reportStatus', function() {
             it('should send packet to job server', function() {
                 j.reportStatus(1, 2);
-                w._sendWithJobServer.calledOnce.should.be.true;
+                w.jobServers[0].send.calledOnce.should.be.true;
             })
             it('should validate given parameters', function() {
                 j.reportStatus().should.be.an.instanceof(Error);
@@ -118,7 +119,7 @@ describe('Worker', function() {
                 j.reportStatus(1, null).should.be.an.instanceof(Error);
                 j.reportStatus(1, '').should.be.an.instanceof(Error);
                 j.reportStatus('1', '2').should.be.an.instanceof(Error);
-                w._sendWithJobServer.called.should.be.false;
+                w.jobServers[0].send.called.should.be.false;
             })
         })
 
@@ -126,9 +127,9 @@ describe('Worker', function() {
         describe('#reportError', function() {
             it('should send packet to job server', function() {
                 j.reportError();
-                w._sendWithJobServer.calledOnce.should.be.true;
+                w.jobServers[0].send.calledOnce.should.be.true;
                 w._preSleep.calledOnce.should.be.true;
-                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+                w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
                 should.not.exist(j.clientOrWorker);
             })
@@ -138,9 +139,9 @@ describe('Worker', function() {
         describe('#reportException', function() {
             it('should send packet to job server', function() {
                 j.reportException('NullPointerException#something cannot be null');
-                w._sendWithJobServer.calledOnce.should.be.true;
+                w.jobServers[0].send.calledOnce.should.be.true;
                 w._preSleep.calledOnce.should.be.true;
-                w._sendWithJobServer.calledBefore(w._preSleep).should.be.true;
+                w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
                 should.not.exist(j.clientOrWorker);
             })
