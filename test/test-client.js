@@ -1,5 +1,6 @@
 var should     = require('should'),
     sinon      = require('sinon'),
+    events     = require('events'),
     gearmanode = require('../lib/gearmanode'),
     Client     = gearmanode.Client,
     Job        = gearmanode.Job,
@@ -32,10 +33,13 @@ describe('Client', function() {
     describe('#close', function() {
         it('should clean up object', function() {
             c.jobs['H:lima:207'] = new Job(c, { name: 'reverse', payload: 'hi' }); // mock the jobs
+            c.on('submit', function() {});
+            events.EventEmitter.listenerCount(c, 'submit').should.equal(1);
             Object.keys(c.jobs).length.should.equal(1);
             c.close();
             c.closed.should.be.true;
             Object.keys(c.jobs).length.should.equal(0);
+            events.EventEmitter.listenerCount(c, 'submit').should.equal(0);
         })
     })
 
