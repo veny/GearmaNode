@@ -31,8 +31,8 @@ worker.addFuntion('reverse', function (job) {
 
 // Job#reportError (for background jobs)
 // var worker = gearmanode.worker();
-// worker.addFuntion('sleep', function (job) {
-//     job.reportError();
+// worker.addFuntion('reverse', function (job) {
+// //    job.reportError();
 // //    job.reportException('delta alfa');
-// //    job.workComplete('OIIUSHDF');
+//     job.workComplete('OIIUSHDF');
 // });

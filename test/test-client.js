@@ -11,6 +11,7 @@ describe('Client', function() {
     var c, js;
     beforeEach(function() {
         c = gearmanode.client();
+        c.emit = sinon.spy();
         js = c.jobServers[0];
     });
 
@@ -40,6 +41,11 @@ describe('Client', function() {
             c.closed.should.be.true;
             Object.keys(c.jobs).length.should.equal(0);
             events.EventEmitter.listenerCount(c, 'submit').should.equal(0);
+        })
+        it('should emit event on itself', function() {
+            c.close();
+            c.emit.calledOnce.should.be.true;
+            c.emit.calledWith('close').should.be.true;
         })
     })
 

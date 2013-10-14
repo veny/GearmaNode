@@ -47,6 +47,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **done** - when there's no submited job more waiting for state CREATED
 * **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
 * **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
+* **close** - when Client#close() called to end the client for future use and to release all its associated resources
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Job events
@@ -62,6 +63,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **error** - when communication with job server failed [Client/Worker]
 
 ## Worker events
+* **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
 * **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Worker

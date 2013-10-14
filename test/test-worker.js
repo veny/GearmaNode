@@ -11,6 +11,7 @@ describe('Worker', function() {
     var w, j;
     beforeEach(function() {
         w = gearmanode.worker();
+        w.emit = sinon.spy();
         w.jobServers[0].send = sinon.spy();
         w._preSleep = sinon.spy();
         j = new Job(w, {handle: 'HANDLE', name: 'NAME', payload: 'PAYLOAD', jobServerUid: 'UID'});
@@ -39,6 +40,11 @@ describe('Worker', function() {
             w.closed.should.be.true;
             Object.keys(w.functions).length.should.equal(0);
             events.EventEmitter.listenerCount(w, 'error').should.equal(0);
+        })
+        it('should emit event on itself', function() {
+            w.close();
+            w.emit.calledOnce.should.be.true;
+            w.emit.calledWith('close').should.be.true;
         })
     })
 
