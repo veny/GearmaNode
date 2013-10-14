@@ -1,6 +1,6 @@
 var should     = require('should'),
     sinon      = require('sinon'),
-    events    = require('events'),
+    events     = require('events'),
     gearmanode = require('../lib/gearmanode'),
     Job        = require('../lib/gearmanode/job').Job,
     protocol   = require('../lib/gearmanode/protocol');
@@ -18,6 +18,7 @@ describe('Job', function() {
         it('should return default instance of Job', function() {
             j.should.be.an.instanceof(Job);
             j.clientOrWorker.should.be.an.instanceof(gearmanode.Client);
+            events.EventEmitter.listenerCount(j.clientOrWorker, 'close').should.equal(1);
             j.name.should.equal('reverse');
             j.payload.should.equal('hi');
             j.background.should.be.false;
@@ -87,6 +88,11 @@ describe('Job', function() {
             j.close();
             events.EventEmitter.listenerCount(j, 'created').should.equal(0);
             events.EventEmitter.listenerCount(j, 'close').should.equal(0);
+        })
+        it('should emit `close` event on itself if associated Client/Worker is closed', function() {
+            c.close();
+            j.emit.calledOnce.should.be.true;
+            j.emit.calledWith('close').should.be.true;
         })
     })
 
