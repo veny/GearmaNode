@@ -62,6 +62,7 @@ describe('JobServer', function() {
             js.connect(function() {
                 js.clientOrWorker.emit.calledOnce.should.be.true;
                 js.clientOrWorker.emit.calledWith('js_connect').should.be.true;
+                js.clientOrWorker.emit.getCall(0).args[1].should.equal(js.getUid());
                 done();
             })
         })
@@ -95,8 +96,9 @@ describe('JobServer', function() {
         it('should emit event on client', function(done) {
             js.connect(function() {
                 js.disconnect();
-                js.clientOrWorker.emit.calledOnce.should.be.true;
-                js.clientOrWorker.emit.calledWith('js_connect').should.be.true;
+                js.clientOrWorker.emit.calledTwice.should.be.true; // connect + disconnect
+                js.clientOrWorker.emit.getCall(1).args[0].should.equal('disconnect');
+                js.clientOrWorker.emit.getCall(1).args[1].should.equal(js.getUid());
                 done();
             })
         })
