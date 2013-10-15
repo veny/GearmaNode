@@ -1,19 +1,19 @@
-var should    = require('should'),
-    sinon     = require('sinon'),
-    util      = require('util'),
-    net       = require('net'),
-    events    = require('events'),
-    JobServer = require('../lib/gearmanode/job-server').JobServer,
-    Job       = require('../lib/gearmanode/job').Job,
-    protocol  = require('../lib/gearmanode/protocol');
+var should     = require('should'),
+    sinon      = require('sinon'),
+    util       = require('util'),
+    net        = require('net'),
+    events     = require('events'),
+    gearmanode = require('../lib/gearmanode'),
+    JobServer  = require('../lib/gearmanode/job-server').JobServer,
+    Job        = require('../lib/gearmanode/job').Job,
+    protocol   = require('../lib/gearmanode/protocol');
 
 
 describe('JobServer', function() {
-    var js;
+    var c, js;
     beforeEach(function() {
-        js = new JobServer({ host: 'localhost', port: 4730 });
-        var emitter = new events.EventEmitter();
-        js.clientOrWorker = { jobs: [], emit: sinon.spy() };
+        c = gearmanode.client();
+        js = c.jobServers[0];
     });
 
 
@@ -59,6 +59,7 @@ describe('JobServer', function() {
             })
         })
         it('should emit event on client when connection OK', function(done) {
+            js.clientOrWorker.emit = sinon.spy();
             js.connect(function() {
                 js.clientOrWorker.emit.calledOnce.should.be.true;
                 js.clientOrWorker.emit.calledWith('js_connect').should.be.true;
@@ -67,13 +68,23 @@ describe('JobServer', function() {
             })
         })
         it('should fire error when connection fails', function(done) {
-            js = new JobServer({ host: 'localhost', port: 1 });
-            var socket = js.connect(function(err) {
+            js.port = 1;
+            js.clientOrWorker.emit = sinon.spy();
+            js.connect(function(err) {
                 should.exist(err);
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
                 js.connected.should.be.false;
                 should.not.exist(js.socket);
+                done();
+            })
+        })
+        it('should disconnect connection whenever error occurs', function(done) {
+            js.port = 1;
+            js.clientOrWorker.emit = sinon.spy(); // to blind emitting of error which terminated the test case
+            js.disconnect = sinon.spy();
+            js.connect(function() {
+                js.disconnect.calledOnce.should.be.true;
                 done();
             })
         })
@@ -93,7 +104,8 @@ describe('JobServer', function() {
                 done();
             })
         })
-        it('should emit event on client', function(done) {
+        it('should emit event on client/worker', function(done) {
+            js.clientOrWorker.emit = sinon.spy();
             js.connect(function() {
                 js.disconnect();
                 js.clientOrWorker.emit.calledTwice.should.be.true; // connect + disconnect
@@ -106,49 +118,55 @@ describe('JobServer', function() {
 
 
     describe('#echo #setOption', function() {
-        it('should store callback for response', function() {
-            js.echo('ping', function() {});
-            should.exist(js.expectedJsResponseCallback);
-        })
         it('should return error when invalid options', function() {
             js.echo().should.be.an.instanceof(Error);
-            js.echo('1').should.be.an.instanceof(Error);
+            js.echo(null).should.be.an.instanceof(Error);
             js.echo(1).should.be.an.instanceof(Error);
-            js.echo(1, function() {}).should.be.an.instanceof(Error);
-            js.echo('1', '1').should.be.an.instanceof(Error);
-            should.not.exist(js.echo('1', function() {}));
+            should.not.exist(js.echo('1'));
         })
     })
 
 
     describe('#echo', function() {
         it('should return echoed data in response', function(done) {
-            js.echo('ping', function(err, response) {
-                should.not.exist(js.expectedJsResponseCallback);
-                should.not.exist(err);
+            js.once('echo', function(response) {
                 response.should.equal('ping');
                 done();
             });
+            js.echo('ping');
         })
     })
 
 
     describe('#setOption', function() {
         it('should return name of the option that was set', function(done) {
-            js.setOption('exceptions', function(err, response) {
-                should.not.exist(js.expectedJsResponseCallback);
-                should.not.exist(err);
+            js.once('option', function(response) {
                 response.should.equal('exceptions');
                 done();
             });
+            js.setOption('exceptions');
         })
-        it('should reply with error if option is unknown', function(done) {
-            js.setOption('foo', function(err, response) {
-                should.not.exist(js.expectedJsResponseCallback);
-                should.not.exist(response);
-                err.should.be.an.instanceof(Error);
+        it('should emit server error on itself if option is unknown', function(done) {
+            js.clientOrWorker.emit = sinon.spy();
+            js.once('jobServerError', function(code, msg) {
+                code.should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
+                js.clientOrWorker.emit.calledTwice.should.be.true; // connect + error, emit on Job Server after emit on Client/Worker
+                js.clientOrWorker.emit.getCall(1).args[0].should.equal('jobServerError');
+                js.clientOrWorker.emit.getCall(1).args[1].should.equal(js.getUid());
+                js.clientOrWorker.emit.getCall(1).args[2].should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
                 done();
             });
+            js.setOption('foo');
+        })
+        it('should emit server error on client/worker if option is unknown', function(done) {
+            js.emit = sinon.spy();
+            c.once('jobServerError', function(uid, code, msg) {
+                uid.should.equal(js.getUid());
+                code.should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
+                js.emit.callCount.should.equal(0); // emit on Job Server after emit on Client/Worker
+                done();
+            });
+            js.setOption('foo');
         })
     })
 
@@ -160,7 +178,7 @@ describe('JobServer', function() {
             js.send(hiPacket);
             js.connect.calledOnce.should.be.true;
         })
-        it('should autoconnect when connected before', function() {
+        it('should not autoconnect again when connected before', function() {
             js.connect = sinon.spy();
             js.connect(function() {
                 js.connect.calledOnce.should.be.true;
@@ -168,21 +186,17 @@ describe('JobServer', function() {
                 js.connect.calledOnce.should.be.true;
             })
         })
-        it('should emit error on client/error when sending fails', function(done) {
+        it('should emit error on client/worker when sending fails', function(done) {
             js.port = 1;
-            js.send(hiPacket);
-            js.clientOrWorker.emit = function(event, err) {
-                event.should.equal('error')
+            js.clientOrWorker.once('error', function(err) {
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
                 done();
-            };
+            });
+            js.send(hiPacket);
         })
         it('should call error callback when data not a Buffer', function() {
-            js.send('TEXT NOT ALLOWED', 'ascii', function(err) {
-                should.exist(err);
-                err.should.be.an.instanceof(Error);
-            })
+            js.send('TEXT NOT ALLOWED').should.be.an.instanceof(Error);
         })
     })
 

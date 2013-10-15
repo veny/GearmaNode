@@ -48,7 +48,13 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 * **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
 * **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
 * **close** - when Client#close() called to end the client for future use and to release all its associated resources
+* **jobServerError** - whenever an associated job server encounters an error and needs to notify the client, has parameters **jobServerUid**, **code**, **message**
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
+
+## JobServer events
+* **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
+* **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
+* **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
 
 ## Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
@@ -64,6 +70,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 ## Worker events
 * **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
+* **jobServerError** - whenever an associated job server encounters an error and needs to notify the worker, has parameters **jobServerUid**, **code**, **message**
 * **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Worker

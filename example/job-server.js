@@ -13,15 +13,22 @@ var gearmanode = require('../lib/gearmanode'),
 var client = gearmanode.client();
 var js = client.jobServers[0];
 
-
-// js.echo('ping', function(err, resp) {
-// 	console.log('echo: response=' + resp);
+// js.once('echo', function(resp) {
+// 	console.log('ECHO: response=' + resp);
+// 	client.close();
 // });
+// js.echo('ping')
 
-js.setOption('exceptions', function(err, resp) {
-	console.log('setOption: err=' + err + ', response=' + resp);
+
+// js.once('option', function(resp) {
+// 	console.log('SET_OPTION: response=' + resp);
+// 	client.close();
+// });
+// js.setOption('exceptions')
+
+
+js.once('jobServerError', function(code, msg) {
+	console.log('SET_OPTION: errCode=' + code +', message=' + msg);
+	client.close();
 });
-
-// js.setOption('unknown_option', function(err, resp) {
-// 	console.log('setOption: err=' + err + ', response=' + resp);
-// });
+js.setOption('unknown_option')
