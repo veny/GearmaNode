@@ -10,15 +10,16 @@ Node.js library for the Gearman distributed job system.
 
 ## Features
 * fully implemented Gearman Protocol
- * TODO (RESET_ABILITIES,SET_CLIENT_ID,CAN_DO_TIMEOUT,ALL_YOURS,GRAB_JOB_UNIQ,JOB_ASSIGN_UNIQ)
+ * TODO (RESET_ABILITIES, SET_CLIENT_ID, CAN_DO_TIMEOUT, ALL_YOURS, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
-* load balancing strategy TODO
-* recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server) TODO
+ * load balancing strategy (`sequence` or `round-robin`)
+ * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
 * support for miscellaneous string encoding supported by Node.js `Buffer` class
 * careful API documentation
 * rock solid tests
- * currently more than 71 test scenarios and 250 asserts
+ * currently more than 80 test scenarios and 280 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
+
 
 ## Usage
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
@@ -27,12 +28,19 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
     var gearmanode = require('gearmanode');
     var client = gearmanode.client(); // by default expects job server on localhost:4730
-    client.submitJob({ name: 'reverse', payload: 'hello world!' }, function(err, job) { // by default foreground job with normal priority
-        job.on('complete', function() {
-            console.log(job.toString() + " >>> " + job.response);
-            client.end();
-        });
-    })
+    var job = client.submitJob({ name: 'reverse', payload: 'hello world!' }); // by default foreground job with normal priority
+    job.on('complete', function() {
+        console.log(job.toString() + " >>> " + job.response);
+        client.close();
+    });
+
+### Worker
+
+    var worker = gearmanode.worker();
+    worker.addFuntion('reverse', function (job) {
+        var rslt = job.payload.toString().split("").reverse().join("");
+        job.workComplete(rslt);
+    });
 
 ### Multiple Job Servers
 
