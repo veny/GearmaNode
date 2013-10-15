@@ -1,6 +1,6 @@
 
 var should = require('should'),
-    util = require('util'),
+    util   = require('util'),
     common = require('../lib/gearmanode/common');
 
 describe('common', function() {
