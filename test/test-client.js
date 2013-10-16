@@ -2,6 +2,7 @@ var should     = require('should'),
     sinon      = require('sinon'),
     events     = require('events'),
     gearmanode = require('../lib/gearmanode'),
+    lb         = require('../lib/gearmanode/load-balancing'),
     Client     = gearmanode.Client,
     Job        = gearmanode.Job,
     JobServer  = require('../lib/gearmanode/job-server').JobServer;
@@ -25,8 +26,16 @@ describe('Client', function() {
             Object.keys(c.jobs).length.should.equal(0);
         })
         it('should return error when servers are duplicate', function() {
-            var c = gearmanode.client({ servers: [{host: 'localhost'}, {host: 'localhost'}] });
+            c = gearmanode.client({ servers: [{host: 'localhost'}, {host: 'localhost'}] });
             c.should.be.an.instanceof(Error);
+            c = gearmanode.client({ loadBalancing: 'AlfaBravo' });
+            c.should.be.an.instanceof(Error);
+        })
+        it('should set correct load balancer', function() {
+            should.exist(c.loadBalancer);
+            c.loadBalancer.should.be.an.instanceof(lb.Sequence);
+            c = gearmanode.client({ loadBalancing: 'RoundRobin' });
+            c.loadBalancer.should.be.an.instanceof(lb.RoundRobin);
         })
     })
 
@@ -64,18 +73,34 @@ describe('Client', function() {
         })
         it('should set many managing values', function() {
             var job = c.submitJob({name: 'reverse', payload: 'hi'});
-            var js = c.jobServers[0];
+            js = c.jobServers[0];
             js.jobsWaiting4Created.length.should.equal(1);
             js.jobsWaiting4Created[0].should.equal(job);
         })
         it('should emit error if submiting fails', function(done) {
-            var c = gearmanode.client({port: 1});
+            c = gearmanode.client({port: 1});
             c.submitJob({name: 'reverse', payload: 'hi'});
             c.once('error', function(err) {
                 should.exist(err);
                 err.should.be.an.instanceof(Error);
                 done();
             })
+        })
+    })
+
+
+    describe('#_getJobServer', function() {
+        it('should return JobServer according to Sequence balancing strategy', function() {
+            c = gearmanode.client({ servers: [{port: 4730}, {port: 4731}] });
+            c._getJobServer().should.equal(c.jobServers[0]);
+            c._getJobServer().should.equal(c.jobServers[0]);
+            c._getJobServer().should.equal(c.jobServers[0]);
+        })
+        it('should return JobServer according to RoundRobin balancing strategy', function() {
+            c = gearmanode.client({ servers: [{port: 4730}, {port: 4731}], loadBalancing: 'RoundRobin' });
+            c._getJobServer().should.equal(c.jobServers[0]);
+            c._getJobServer().should.equal(c.jobServers[1]);
+            c._getJobServer().should.equal(c.jobServers[0]);
         })
     })
 

@@ -17,7 +17,7 @@ Node.js library for the Gearman distributed job system.
 * support for miscellaneous string encoding supported by Node.js `Buffer` class
 * careful API documentation
 * rock solid tests
- * currently more than 80 test scenarios and 280 asserts
+ * currently more than 90 test scenarios and 300 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
@@ -48,6 +48,17 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
     client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
     // two servers with default values: foo.com:4730, localhost:4731
     client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+
+#### Load Balancing
+
+* default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
+* `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
+
+
+    // default load balancer
+    client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+    // defined load balancer
+    client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 
 
 ## Client events
