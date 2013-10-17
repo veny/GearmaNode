@@ -44,22 +44,22 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 ### Multiple Job Servers
 
-    // two servers: foo.com:4731, bar.com:4732
-    client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
-    // two servers with default values: foo.com:4730, localhost:4731
-    client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+```javascript
+// two servers: foo.com:4731, bar.com:4732
+client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
+// two servers with default values: foo.com:4730, localhost:4731
+client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+```
 
 #### Load Balancing
-
-* default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
-* `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
-
 
     // default load balancer
     client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
     // defined load balancer
     client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 
++ default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
++ `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
 
 ## Client events
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
