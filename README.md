@@ -53,15 +53,15 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
 
 #### Load Balancing
 
++ default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
++ `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
+
 ```javascript
 // default load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
 // defined load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 ```
-
-+ default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
-+ `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
 
 ## Client events
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
