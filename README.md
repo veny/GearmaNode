@@ -26,21 +26,25 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 ### Client
 
-    var gearmanode = require('gearmanode');
-    var client = gearmanode.client(); // by default expects job server on localhost:4730
-    var job = client.submitJob({ name: 'reverse', payload: 'hello world!' }); // by default foreground job with normal priority
-    job.on('complete', function() {
-        console.log(job.toString() + " >>> " + job.response);
-        client.close();
-    });
+```javascript
+var gearmanode = require('gearmanode');
+var client = gearmanode.client(); // by default expects job server on localhost:4730
+var job = client.submitJob({ name: 'reverse', payload: 'hello world!' }); // by default foreground job with normal priority
+job.on('complete', function() {
+    console.log(job.toString() + " >>> " + job.response);
+    client.close();
+});
+```
 
 ### Worker
 
-    var worker = gearmanode.worker();
-    worker.addFuntion('reverse', function (job) {
-        var rslt = job.payload.toString().split("").reverse().join("");
-        job.workComplete(rslt);
-    });
+```javascript
+var worker = gearmanode.worker();
+worker.addFuntion('reverse', function (job) {
+    var rslt = job.payload.toString().split("").reverse().join("");
+    job.workComplete(rslt);
+});
+```
 
 ### Multiple Job Servers
 
