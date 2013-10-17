@@ -25,9 +25,11 @@ describe('Client', function() {
             should.exist(c.jobs);
             Object.keys(c.jobs).length.should.equal(0);
         })
-        it('should return error when servers are duplicate', function() {
+        it('should return error when violated validation', function() {
+            // duplicate servers
             c = gearmanode.client({ servers: [{host: 'localhost'}, {host: 'localhost'}] });
             c.should.be.an.instanceof(Error);
+            // unknown load balancing strategy
             c = gearmanode.client({ loadBalancing: 'AlfaBravo' });
             c.should.be.an.instanceof(Error);
         })
@@ -100,8 +102,8 @@ describe('Client', function() {
             c = gearmanode.client({ servers: [{port: 4730}, {port: 4731}], loadBalancing: 'RoundRobin' });
             c._getJobServer().should.equal(c.jobServers[0]);
             c._getJobServer().should.equal(c.jobServers[1]);
-            c._getJobServer().should.equal(c.jobServers[0]);
-        })
+            c._getJobServer().should.equal(c.jobServers[0])
+;        })
     })
 
 
@@ -128,6 +130,52 @@ describe('Client', function() {
                 j.jobServerUid = js.getUid();
                 j.getStatus(function(err){});
                 js.send.calledOnce.should.be.true;
+            })
+        })
+    })
+
+
+    describe('#LoadBalancer', function() {
+
+
+        describe('#_getJobServer', function() {
+            it('should return corresponding job server (Sequence)', function() {
+                c = gearmanode.client({servers: [{port: 4730}, {port: 4731}]});
+                c._getJobServer().should.equal(c.jobServers[0]);
+                c._getJobServer().should.equal(c.jobServers[0]);
+                c._getJobServer().should.equal(c.jobServers[0]);
+            })
+            it('should return corresponding job server (RoundRobin)', function() {
+                c = gearmanode.client({servers: [{port: 4730}, {port: 4731}], loadBalancing: 'RoundRobin'});
+                c._getJobServer().should.equal(c.jobServers[0]);
+                c._getJobServer().should.equal(c.jobServers[1]);
+                c._getJobServer().should.equal(c.jobServers[0]);
+            })
+            it('should emit error if all job server invalid', function() {
+                c = gearmanode.client({port: 1});
+                c.emit = sinon.spy();
+                c.loadBalancer.badOne(0);
+                c.emit.callCount.should.equal(0);
+                c._getJobServer();
+                c.emit.calledOnce.should.be.true;
+            })
+        })
+
+
+        describe('#(error handling)', function() {
+            it('should mark job server as bad when connection fails', function(done) {
+                c = gearmanode.client({port: 1});
+                c.emit = sinon.spy();
+                c.loadBalancer.badOne = sinon.spy();
+                c.jobServers[0].connect(function(err) {
+                    should.exist(err);
+                    err.should.be.an.instanceof(Error);
+                    c.loadBalancer.badOne.calledOnce.should.be.true;
+                    c.loadBalancer.badOne.calledWith(0).should.be.true;
+                    c.emit.calledTwice.should.be.true; // error + disconnect
+                    done();
+                })
+
             })
         })
     })
