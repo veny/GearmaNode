@@ -1,0 +1,31 @@
+{
+  "name": "GearmaNode",
+  "version": "0.1.0",
+  "description": "Node.js library for the Gearman distributed job system",
+  "keywords": ["gearman", "distributed"],
+  "author": "Vaclav Sykora <vaclav.sykora@gmail.com>",
+  "main": "./lib/gearmanode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veny/GearmaNode"
+  },
+  "bugs" : { "url" : "https://github.com/veny/GearmaNode/issues" },
+  "engines": { "node": ">=0.10.0" },
+  "licenses": [{
+      "type": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }],
+  "scripts": {
+    "test": "mocha",
+    "doc": "jsdoc"
+  },
+  "dependencies": {
+    "winston": ">=0.7.1"
+  },
+  "devDependencies": {
+    "mocha": ">=1.10.0",
+    "should": ">=1.2.2",
+    "sinon": ">=1.7.3"
+  },
+  "files": ["lib", "README.md", "LICENSE"]
+}
