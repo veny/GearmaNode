@@ -17,7 +17,7 @@
   }],
   "scripts": {
     "test": "mocha",
-    "doc": "jsdoc"
+    "doc": "jsdoc lib/gearmanode.js lib/gearmanode/*.js"
   },
   "dependencies": {
     "winston": ">=0.7.1"
