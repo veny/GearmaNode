@@ -5,7 +5,7 @@
            \____|\___|\__,_|_|  |_| |_| |_|\__,_|_| \_|\___/ \__,_|\___|
 
 
-Node.js library for the Gearman distributed job system.
+Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 
 
 ## Features
@@ -21,10 +21,17 @@ Node.js library for the Gearman distributed job system.
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
+## Installation
+
+    > npm install gearmaNode
+
+
 ## Usage
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 
 ### Client
+The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.  
+-- Gearman Documentation --  
 
 ```javascript
 var gearmanode = require('gearmanode');
@@ -37,6 +44,7 @@ job.on('complete', function() {
 ```
 
 ### Worker
+The worker performs the work requested by the client and sends a response to the client through the job server. 
 
 ```javascript
 var worker = gearmanode.worker();
