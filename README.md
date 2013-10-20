@@ -33,15 +33,42 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
 The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.  
 -- Gearman Documentation --  
 
+Instance of class `Client` must be created to connect a Gearman job server(s) and to make requests to perform some function on provided data.
+
 ```javascript
 var gearmanode = require('gearmanode');
-var client = gearmanode.client(); // by default expects job server on localhost:4730
-var job = client.submitJob({ name: 'reverse', payload: 'hello world!' }); // by default foreground job with normal priority
-job.on('complete', function() {
-    console.log(job.toString() + " >>> " + job.response);
-    client.close();
-});
+var client = gearmanode.client();
 ```
+
+By default, the jobserver is expected on `localhost:4730`. More detailed configuration can be defined as follows:
+
+
+```javascript
+// special port
+client = gearmanode.client({ port: 4732});
+
+// two servers: foo.com:4731, bar.com:4732
+client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
+
+// two servers with default values: foo.com:4730, localhost:4731
+client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+```
+
+A client issues a request when job needs to be run. A type of the job (foreground/background) and priority (high/normal/low) can be defined.
+
+```javascript
+// by default foreground job with normal priority
+var job = client.submitJob({ name: 'reverse', payload: 'hello world!' });
+
+// background job
+var job = client.submitJob({ name: 'reverse', payload: 'hello world!', background: true });
+
+// foreground job with high priority
+var job = client.submitJob({ name: 'reverse', payload: 'hello world!', background: true });
+// 
+```
+
+Close...
 
 ### Worker
 The worker performs the work requested by the client and sends a response to the client through the job server. 
@@ -56,12 +83,6 @@ worker.addFuntion('reverse', function (job) {
 
 ### Multiple Job Servers
 
-```javascript
-// two servers: foo.com:4731, bar.com:4732
-client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
-// two servers with default values: foo.com:4730, localhost:4731
-client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
-```
 
 #### Load Balancing
 
