@@ -29,6 +29,11 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 ## Usage
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
+* [Client](#client)
+  * [Client events](#client-events)
+* [Worker](#worker)
+  * [Worker events](#worker-events)
+
 ### Client
 *The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*  
 -- Gearman Documentation --  
@@ -55,13 +60,13 @@ client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
 A client issues a request when job needs to be run. Following options can be used for detailed settings of the job
+
+* **name** {string} name of the function, *Mandatory*
+* **payload** {string|Buffer} transmited data, *Mandatory* @TODO Buffer
 * **background** {boolean} flag whether the job should be processed in background/asynchronous, *Optional*
-* **priority** {HIGH|NORMAL|LOW]} priority in job server queue, *Optional*
-* name - name of the function, [Client/Worker]
-* handle - unique handle assigned by job server when job created [Client/Worker]
-* payload - transmited/received data (Buffer or String), *Mandatory* [Client/Worker]
-* encoding - encoding to use, *Optional* [Client]
-* jobServerUid - unique identification of job server that transmited the job [Client/Worker]
+* **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue, *Optional*
+* **encoding** - {string} encoding if string data used, *Optional*
+* **unique** {string} unique identifiter for the job, *Optional* @TODO
 
 ```javascript
 // by default foreground job with normal priority
@@ -70,18 +75,34 @@ var job = client.submitJob({name: 'reverse', payload: 'hello world!'});
 // background job
 var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: true});
 
-// foreground job with high priority
-var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: false, priority: 'HIGH'});
-// 
+// full configured job
+var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: false, priority: 'HIGH', encoding: 'utf8', unique: 'FooBazBar'});
 ```
 
-A client object should be closed if no more needed to release all its associated resources and socket connections.
+Client-side processing of job is managed via emitted events. See [Job events](#job-events) for more info.
 
 ```javascript
-client.close();
+var client = gearmanode.client();
+var job = client.submitJob({name: 'reverse', payload: 'hi'});
+job.on('complete', function() {
+    console.log('RESULT: ' + job.response);
+    client.close();
+});
 ```
 
-### Job
+A client object should be closed if no more needed to release all its associated resources and socket connections. See the sample above.
+
+### Client events
+* **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
+* **done** - when there's no submited job more waiting for state CREATED
+* **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
+* **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
+* **close** - when Client#close() called to end the client for future use and to release all its associated resources
+* **jobServerError** - whenever an associated job server encounters an error and needs to notify the client, has parameters **jobServerUid**, **code**, **message**
+* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
+
+
+## Job
 
 The `Job` object is an encapsulation of job's attributes and interface for next communication with job server.
 Additionally is the object en emitter of events corresponding to job's life cycle (see **Job events**).
@@ -131,15 +152,6 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
 // desired load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 ```
-
-## Client events
-* **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
-* **done** - when there's no submited job more waiting for state CREATED
-* **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
-* **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
-* **close** - when Client#close() called to end the client for future use and to release all its associated resources
-* **jobServerError** - whenever an associated job server encounters an error and needs to notify the client, has parameters **jobServerUid**, **code**, **message**
-* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## JobServer events
 * **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
