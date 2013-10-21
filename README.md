@@ -54,9 +54,9 @@ client = gearmanode.client({servers: [{host: 'foo.com', port: 4731}, {host: 'bar
 client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
-A client issues a request when job needs to be run. Additional options can be used for detailed settings of the job
-* **background** if the job should be processed in background/asynchronous, *Optional*, [true, false]
-* **priority** priority in job server queue, *Optional*, [HIGH,NORMAL,LOW]
+A client issues a request when job needs to be run. Following options can be used for detailed settings of the job
+* **background** {boolean} flag whether the job should be processed in background/asynchronous, *Optional*
+* **priority** {HIGH|NORMAL|LOW]} priority in job server queue, *Optional*
 * name - name of the function, [Client/Worker]
 * handle - unique handle assigned by job server when job created [Client/Worker]
 * payload - transmited/received data (Buffer or String), *Mandatory* [Client/Worker]
