@@ -27,10 +27,10 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 
 
 ## Usage
-See [example](https://github.com/veny/GearmaNode/tree/master/example) folder.
+See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
 ### Client
-The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.  
+*The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*  
 -- Gearman Documentation --  
 
 Instance of class `Client` must be created to connect a Gearman job server(s) and to make requests to perform some function on provided data.
@@ -45,33 +45,61 @@ By default, the jobserver is expected on `localhost:4730`. More detailed configu
 
 ```javascript
 // special port
-client = gearmanode.client({ port: 4732});
+client = gearmanode.client({port: 4732});
 
 // two servers: foo.com:4731, bar.com:4732
-client = gearmanode.client({ servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}] });
+client = gearmanode.client({servers: [{host: 'foo.com', port: 4731}, {host: 'bar.com', port: 4732}]});
 
 // two servers with default values: foo.com:4730, localhost:4731
-client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
 A client issues a request when job needs to be run. A type of the job (foreground/background) and priority (high/normal/low) can be defined.
 
 ```javascript
 // by default foreground job with normal priority
-var job = client.submitJob({ name: 'reverse', payload: 'hello world!' });
+var job = client.submitJob({name: 'reverse', payload: 'hello world!'});
 
 // background job
-var job = client.submitJob({ name: 'reverse', payload: 'hello world!', background: true });
+var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: true});
 
 // foreground job with high priority
-var job = client.submitJob({ name: 'reverse', payload: 'hello world!', background: true });
+var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: false, priority: 'HIGH'});
 // 
 ```
 
-Close...
+A client object should be closed if no more needed to release all its associated resources and socket connections.
+
+```javascript
+client.close();
+```
+
+### Job
+
+The `Job` object is an encapsulation of job's attributes and interface for next communication with job server.
+Additionally is the object en emitter of events corresponding to job's life cycle (see **Job events**).
+
+The `job` has following getters
+
+* name - name of the function [Client/Worker]
+* jobServerUid - unique identification of job server that transmited the job [Client/Worker]
+* handle - unique handle assigned by job server when job created [Client/Worker]
+* payload - transmited/received data (Buffer or String) [Client/Worker]
+
+and methods
+
+* getStatus - sends request to get status of a background job [Client]
+* workComplete - sends a notification to the server (and any listening clients) that the job completed successfully [Worker]
+* reportStatus - reports job's status to the job server [Worker]
+* reportWarning - sends a warning explicitly to the job server [Worker] @TODO
+* reportError - to indicate that the job failed [Worker]
+* reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
+* sendData - send data before job completes [Worker]
+
 
 ### Worker
-The worker performs the work requested by the client and sends a response to the client through the job server. 
+*The worker performs the work requested by the client and sends a response to the client through the job server.*  
+-- Gearman Documentation --  
 
 ```javascript
 var worker = gearmanode.worker();
@@ -145,21 +173,6 @@ The worker function `callback` gets parameter `job` which is:
 * value object to turn over job's parameters
 * interface to send job notification/information to the job server
 
-The `job` object has following getters
-
-* name - getter for name of the function
-* jobServerUid - getter for unique identification of job server that transmited the job
-* handle - getter for job's handle
-* payload - getter for received data (Buffer or String)
-
-and methods
-
-* workComplete - sends a notification to the server (and any listening clients) that the job completed successfully
-* reportStatus - reports job's status to the job server
-* reportWarning - sends a warning explicitly to the job server
-* reportError - to indicate that the job failed
-* reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility)
-* sendData - send data before job completes
 
 The `options` can be:
 
@@ -182,3 +195,9 @@ Make sure before starting the tests:
 
 * vaclav.sykora@gmail.com
 * https://plus.google.com/115674031373998885915
+
+
+## License
+
+* [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+* see [LICENSE](https://github.com/veny/GearmaNode/tree/master/LICENSE) file for more details
