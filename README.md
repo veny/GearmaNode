@@ -54,7 +54,14 @@ client = gearmanode.client({servers: [{host: 'foo.com', port: 4731}, {host: 'bar
 client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
-A client issues a request when job needs to be run. A type of the job (foreground/background) and priority (high/normal/low) can be defined.
+A client issues a request when job needs to be run. Additional options can be used for detailed settings of the job
+* **background** if the job should be processed in background/asynchronous, *Optional*, [true, false]
+* **priority** priority in job server queue, *Optional*, [HIGH,NORMAL,LOW]
+* name - name of the function, [Client/Worker]
+* handle - unique handle assigned by job server when job created [Client/Worker]
+* payload - transmited/received data (Buffer or String), *Mandatory* [Client/Worker]
+* encoding - encoding to use, *Optional* [Client]
+* jobServerUid - unique identification of job server that transmited the job [Client/Worker]
 
 ```javascript
 // by default foreground job with normal priority
@@ -81,10 +88,11 @@ Additionally is the object en emitter of events corresponding to job's life cycl
 
 The `job` has following getters
 
-* name - name of the function [Client/Worker]
+* name - name of the function, [Client/Worker]
 * jobServerUid - unique identification of job server that transmited the job [Client/Worker]
 * handle - unique handle assigned by job server when job created [Client/Worker]
-* payload - transmited/received data (Buffer or String) [Client/Worker]
+* payload - transmited/received data (Buffer or String), *Mandatory* [Client/Worker]
+* encoding - encoding to use, *Optional* [Client]
 
 and methods
 
@@ -111,7 +119,6 @@ worker.addFuntion('reverse', function (job) {
 
 ### Multiple Job Servers
 
-
 #### Load Balancing
 
 + default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
@@ -120,7 +127,8 @@ worker.addFuntion('reverse', function (job) {
 ```javascript
 // default load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
-// defined load balancer
+
+// desired load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 ```
 

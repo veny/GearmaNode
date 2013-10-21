@@ -62,7 +62,7 @@ describe('Client', function() {
     })
 
 
-    describe('#submit', function() {
+    describe('#submitJob', function() {
         it('should return job instance', function() {
             var job = c.submitJob({name: 'reverse', payload: 'hi'});
             should.exist(job);
