@@ -70,7 +70,7 @@ client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 
 #### Submit job
 
-Client submits job to a Gearman server to be futher performed by a worker via `client#submitJob(name, payload, options)`
+Client submits job to a Gearman server and futher processed by a worker via `client#submitJob(name, payload, options)`
 where `name` is name of registered function a worker is to execute, `payload` is data to be processed
 and `options` are additional options as follows:
 
@@ -146,11 +146,13 @@ The worker function `callback` gets parameter [Job](#job) which is:
 * interface to send job notification/information to the job server
 
 ```javascript
-worker.addFuntion('reverse', function (job) {
+worker.addFunction('reverse', function (job) {
     var rslt = job.payload.toString().split("").reverse().join("");
     job.workComplete(rslt);
 });
 ```
+
+A registered function can be unregistered via `worker#removeFunction`.
 
 #### Worker events
 * **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
