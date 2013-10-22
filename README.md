@@ -27,13 +27,14 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 
 
 ## Usage
-See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.  
-See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.
+See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.  
+See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
 * [Client](#client)
-  * [Submitting job](#submitting-job)
+  * [Submit job](#submit-job)
   * [Client events](#client-events)
 * [Worker](#worker)
+  * [Register function](#register-function)
   * [Worker events](#worker-events)
 
 ### Client
@@ -66,7 +67,7 @@ client = gearmanode.client({servers: [{host: 'foo.com', port: 4731}, {host: 'bar
 client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
-#### Submitting job
+#### Submit job
 A client issues a request when job needs to be run. Following options can be used for detailed configuration of the job:
 
 * **name** {string} name of the function, *Mandatory*
@@ -117,15 +118,39 @@ A client object should be closed if no more needed to release all its associated
 Instance of class `Worker` must be created to connect a Gearman job server(s), where it then informs the server(s) of all different functions the Worker is capable of doing.
 
 ```javascript
+var gearmanode = require('gearmanode');
 var worker = gearmanode.worker();
+```
+By default, the job server is expected on `localhost:4730`. Following options can be used for detailed configuration of the worker:
+
+ * **host** [see Client](#client)
+ * **port** [see Client](#client)
+ * **servers** [see Client](#client)
+ * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID, *Optional* @TODO
+
+#### Register function
+
+A function the worker is able to perform can be registered via `worker#addFunction(name, callback, options)`
+where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
+and `options` are additional options.
+
+The `options` can be:
+
+* **timeout** {number}  timeout value in seconds, the job server will mark the job as failed and notify any listening clients, *Optional* @TODO
+* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`, *Optional* @TODO
+
+The worker function `callback` gets parameter [Job](#job) which is:
+
+* job event emitter (see [Job events](#job-events))
+* value object to turn over job's parameters
+* interface to send job notification/information to the job server
+
+```javascript
 worker.addFuntion('reverse', function (job) {
     var rslt = job.payload.toString().split("").reverse().join("");
     job.workComplete(rslt);
 });
 ```
-By default, the job server is expected on `localhost:4730`. Following options can be used for detailed configuration of the worker:
-
-AAA
 
 #### Worker events
 * **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
@@ -188,31 +213,6 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBal
 * **timeout** - when the job has been canceled due to timeout [Client/Worker]
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 * **error** - when communication with job server failed [Client/Worker]
-
-
-## Worker
-
-    var worker = gearmanode.worker();
-    worker.addFuntion('reverse', function (job) {
-        var rslt = job.payload.toString().split("").reverse().join("");
-        job.workComplete(rslt);
-    });
-
-A function the worker is able to perform can be registered via `worker#addFunction(name, callback, options)`
-where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
-and `options` are additional options.
-
-The worker function `callback` gets parameter `job` which is:
-
-* job event emitter (see **Job events**)
-* value object to turn over job's parameters
-* interface to send job notification/information to the job server
-
-
-The `options` can be:
-
-* timeout - the timeout value, the job server will mark the job as failed and notify any listening clients
-* toStringEncoding - if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 
 ## Tests
