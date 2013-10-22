@@ -64,7 +64,7 @@ describe('Client', function() {
 
     describe('#submitJob', function() {
         it('should return job instance', function() {
-            var job = c.submitJob({name: 'reverse', payload: 'hi'});
+            var job = c.submitJob('reverse', 'hi');
             should.exist(job);
             job.should.be.an.instanceof(Job);
             job.name.should.equal('reverse');
@@ -73,15 +73,19 @@ describe('Client', function() {
             job.processing.should.be.true;
             job.jobServerUid.should.equal(js.getUid());
         })
+        it('should return error if bad parameters', function() {
+            c.submitJob().should.be.an.instanceof(Error);
+            c.submitJob('reverse').should.be.an.instanceof(Error);
+        })
         it('should set many managing values', function() {
-            var job = c.submitJob({name: 'reverse', payload: 'hi'});
+            var job = c.submitJob('reverse', 'hi');
             js = c.jobServers[0];
             js.jobsWaiting4Created.length.should.equal(1);
             js.jobsWaiting4Created[0].should.equal(job);
         })
         it('should emit error if submiting fails', function(done) {
             c = gearmanode.client({port: 1});
-            c.submitJob({name: 'reverse', payload: 'hi'});
+            c.submitJob('reverse', 'hi');
             c.once('error', function(err) {
                 should.exist(err);
                 err.should.be.an.instanceof(Error);

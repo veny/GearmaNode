@@ -3,11 +3,11 @@ var gearmanode = require('../lib/gearmanode');
 
 
 // Foreground Job
-// var worker = gearmanode.worker();
-// worker.addFuntion('reverse', function (job) {
-//     var rslt = job.payload.toString().split("").reverse().join("");
-//     job.workComplete(rslt);
-// });
+var worker = gearmanode.worker();
+worker.addFuntion('reverse', function (job) {
+    var rslt = job.payload.toString().split("").reverse().join("");
+    job.workComplete(rslt);
+});
 
 
 // Background Job
@@ -30,9 +30,9 @@ var gearmanode = require('../lib/gearmanode');
 
 
 // Job#reportError (for background jobs)
-var worker = gearmanode.worker();
-worker.addFuntion('reverse', function (job) {
-    job.reportError();
-//    job.reportException('delta alfa');
-//    job.workComplete('OIIUSHDF');
-});
+// var worker = gearmanode.worker();
+// worker.addFuntion('reverse', function (job) {
+//     job.reportError();
+// //    job.reportException('delta alfa');
+// //    job.workComplete('OIIUSHDF');
+// });

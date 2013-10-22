@@ -36,6 +36,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
 * [Worker](#worker)
   * [Register function](#register-function)
   * [Worker events](#worker-events)
+* [Error handling](#error-handling)
 
 ### Client
 *The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*  
@@ -50,11 +51,11 @@ var client = gearmanode.client();
 
 By default, the job server is expected on `localhost:4730`. Following options can be used for detailed configuration of the client:
 
- * **host** {string} hostname of single job server, *Optional*
- * **port** {number} port of single job server, *Optional*
- * **servers** {array} array of host,port pairs of multiple job servers, *Optional*
- * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy, *Optional*
- * **recoverTime** {number} delay in seconds before retrying the downed job server, *Optional* @TODO
+ * **host** {string} hostname of single job server
+ * **port** {number} port of single job server
+ * **servers** {array} array of host,port pairs of multiple job servers
+ * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy
+ * **recoverTime** {number} delay in seconds before retrying the downed job server @TODO
 
 ```javascript
 // special port
@@ -70,32 +71,30 @@ client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 #### Submit job
 
 Client submits job to a Gearman server to be futher performed by a worker via `client#submitJob(name, payload, options)`
-where `name` is name of registered function the worker is to execute, `payload` is data to be processed
+where `name` is name of registered function a worker is to execute, `payload` is data to be processed
 and `options` are additional options as follows:
 
-* **name** {string} name of the function, *Mandatory*
-* **payload** {string|Buffer} transmited data, *Mandatory* @TODO Buffer
-* **background** {boolean} flag whether the job should be processed in background/asynchronous, *Optional*
-* **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue, *Optional*
-* **encoding** - {string} encoding if string data used, *Optional*
-* **unique** {string} unique identifiter for the job, *Optional* @TODO
+* **background** {boolean} flag whether the job should be processed in background/asynchronous
+* **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
+* **encoding** - {string} encoding if string data used
+* **unique** {string} unique identifiter for the job @TODO
 
 ```javascript
 // by default foreground job with normal priority
-var job = client.submitJob({name: 'reverse', payload: 'hello world!'});
+var job = client.submitJob('reverse', 'hello world!');
 
 // background job
-var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: true});
+var job = client.submitJob('reverse', 'hello world!', {background: true});
 
 // full configured job
-var job = client.submitJob({name: 'reverse', payload: 'hello world!', background: false, priority: 'HIGH', encoding: 'utf8', unique: 'FooBazBar'});
+var job = client.submitJob('reverse', 'hello world!', {background: false, priority: 'HIGH', encoding: 'utf8', unique: 'FooBazBar'});
 ```
 
 Client-side processing of job is managed via emitted events. See [Job events](#job-events) for more info.
 
 ```javascript
 var client = gearmanode.client();
-var job = client.submitJob({name: 'reverse', payload: 'hi'});
+var job = client.submitJob('reverse', 'hi');
 job.on('complete', function() {
     console.log('RESULT: ' + job.response);
     client.close();
@@ -129,7 +128,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **host** [see Client](#client)
  * **port** [see Client](#client)
  * **servers** [see Client](#client)
- * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID, *Optional* @TODO
+ * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID @TODO
 
 #### Register function
 
@@ -137,8 +136,8 @@ A function the worker is able to perform can be registered via `worker#addFuncti
 where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
 and `options` are additional options as follows:
 
-* **timeout** {number}  timeout value in seconds, the job server will mark the job as failed and notify any listening clients, *Optional* @TODO
-* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`, *Optional* @TODO
+* **timeout** {number}  timeout value in seconds, the job server will mark the job as failed and notify any listening clients @TODO
+* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer` @TODO
 
 The worker function `callback` gets parameter [Job](#job) which is:
 
@@ -159,7 +158,7 @@ worker.addFuntion('reverse', function (job) {
 * **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 
-## Job
+### Job
 
 The `Job` object is an encapsulation of job's attributes and interface for next communication with job server.
 Additionally is the object en emitter of events corresponding to job's life cycle (see **Job events**).
@@ -169,8 +168,8 @@ The `job` has following getters
 * name - name of the function, [Client/Worker]
 * jobServerUid - unique identification of job server that transmited the job [Client/Worker]
 * handle - unique handle assigned by job server when job created [Client/Worker]
-* payload - transmited/received data (Buffer or String), *Mandatory* [Client/Worker]
-* encoding - encoding to use, *Optional* [Client]
+* payload - transmited/received data (Buffer or String) [Client/Worker]
+* encoding - encoding to use [Client]
 
 and methods
 
@@ -198,12 +197,12 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
 ```
 
-## JobServer events
+#### JobServer events
 * **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
 * **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
 * **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
 
-## Job events
+#### Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
@@ -214,6 +213,18 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBal
 * **timeout** - when the job has been canceled due to timeout [Client/Worker]
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 * **error** - when communication with job server failed [Client/Worker]
+
+
+### Error handling
+Although exceptions are supported in JavaScript and they can be used to communicate an error, due to asynchronous concept of Node.js it can be a bad idea.
+According to Node.js best practices following error handling is introduced in GearmaNode.
+
+#### Synchronous errors
+A synchronous code returns an `Error` object if something goes wrong. This happens mostly in input value validation.
+
+#### Asynchronous errors
+In asynchronous code an error event will be emitted via `EventEmitter` on corresponding object if something goes wrong.
+This happens mostly by network communication or if a gearman service fails.
 
 
 ## Tests
