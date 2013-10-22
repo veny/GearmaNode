@@ -68,7 +68,10 @@ client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
 #### Submit job
-A client issues a request when job needs to be run. Following options can be used for detailed configuration of the job:
+
+Client submits job to a Gearman server to be futher performed by a worker via `client#submitJob(name, payload, options)`
+where `name` is name of registered function the worker is to execute, `payload` is data to be processed
+and `options` are additional options as follows:
 
 * **name** {string} name of the function, *Mandatory*
 * **payload** {string|Buffer} transmited data, *Mandatory* @TODO Buffer
@@ -132,9 +135,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
 
 A function the worker is able to perform can be registered via `worker#addFunction(name, callback, options)`
 where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
-and `options` are additional options.
-
-The `options` can be:
+and `options` are additional options as follows:
 
 * **timeout** {number}  timeout value in seconds, the job server will mark the job as failed and notify any listening clients, *Optional* @TODO
 * **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`, *Optional* @TODO
