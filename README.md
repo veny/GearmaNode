@@ -166,15 +166,15 @@ A registered function can be unregistered via `worker#removeFunction`.
 ### Job
 
 The `Job` object is an encapsulation of job's attributes and interface for next communication with job server.
-Additionally is the object en emitter of events corresponding to job's life cycle (see **Job events**).
+Additionally is the object en emitter of events corresponding to job's life cycle (see [Job events](#job-events)).
 
 The `job` has following getters
 
-* name - name of the function, [Client/Worker]
-* jobServerUid - unique identification of job server that transmited the job [Client/Worker]
-* handle - unique handle assigned by job server when job created [Client/Worker]
-* payload - transmited/received data (Buffer or String) [Client/Worker]
-* encoding - encoding to use [Client]
+* **name** - name of the function, [Client/Worker]
+* **payload** - transmited/received data (Buffer or String) [Client/Worker]
+* **jobServerUid** - unique identification of the job server that transmited the job [Client/Worker]
+* **handle** - unique handle assigned by job server when job created [Client/Worker]
+* **encoding** - encoding to use [Client]
 
 and methods
 
