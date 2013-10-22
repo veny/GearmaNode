@@ -7,17 +7,17 @@ var gearmanode = require('../lib/gearmanode'),
 
 
 // Foreground Job waiting for completition
-var client = gearmanode.client();
-var job = client.submitJob('reverse', 'hello world!');
-//var job = client.submitJob('reverse', 'žluťoučký kůň');
-job.on('complete', function() {
-    console.log('RESULT >>> ' + job.response);
-    client.close();
-});
-job.on('failed', function() {
-    console.log('FAILURE >>> ' + job.handle);
-    client.close();
-});
+// var client = gearmanode.client();
+// var job = client.submitJob('reverse', 'hello world!');
+// //var job = client.submitJob('reverse', 'žluťoučký kůň');
+// job.on('complete', function() {
+//     console.log('RESULT >>> ' + job.response);
+//     client.close();
+// });
+// job.on('failed', function() {
+//     console.log('FAILURE >>> ' + job.handle);
+//     client.close();
+// });
 
 
 // Foreground Job receiving status update
@@ -33,20 +33,20 @@ job.on('failed', function() {
 
 
 // Background Job asking for status
-// var timeout = 3000;
-// var client = gearmanode.client();
-// var job = client.submitJob('sleep', '5', {background: true});
-// job.on('created', function() {
-//     console.log('--- Job#created - ' + job.toString());
-//     console.log('--- waiting for wake-up ' + timeout + '[ms] ...')
-//     setTimeout((function() {
-//         job.getStatus(function(err){console.log('=========== ' + err)});
-//     }), timeout);
-// });
-// job.on('status', function(result) {
-//     console.log('--- result: ' + util.inspect(result));
-//     client.close();
-// });
+var timeout = 3000;
+var client = gearmanode.client();
+var job = client.submitJob('sleep', '5', {background: true});
+job.on('created', function() {
+    console.log('--- Job#created - ' + job.toString());
+    console.log('--- waiting for wake-up ' + timeout + '[ms] ...')
+    setTimeout((function() {
+        job.getStatus(function(err){console.log('=========== ' + err)});
+    }), timeout);
+});
+job.on('status', function(result) {
+    console.log('--- result: ' + util.inspect(result));
+    client.close();
+});
 
 
 // Foreground Job obtaining error/exception

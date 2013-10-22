@@ -114,7 +114,6 @@ describe('Worker', function() {
                 w._preSleep.calledOnce.should.be.true;
                 w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
-                should.not.exist(j.clientOrWorker);
             })
         })
 
@@ -142,7 +141,6 @@ describe('Worker', function() {
                 w._preSleep.calledOnce.should.be.true;
                 w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
-                should.not.exist(j.clientOrWorker);
             })
         })
 
@@ -154,7 +152,6 @@ describe('Worker', function() {
                 w._preSleep.calledOnce.should.be.true;
                 w.jobServers[0].send.calledBefore(w._preSleep).should.be.true;
                 j.closed.should.be.true;
-                should.not.exist(j.clientOrWorker);
             })
         })
     })
