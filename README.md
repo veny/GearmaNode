@@ -31,11 +31,14 @@ See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman con
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
 * [Client](#client)
-  * [Submit job](#submit-job)
-  * [Client events](#client-events)
+ * [Submit job](#submit-job)
+ * [Client events](#client-events)
 * [Worker](#worker)
-  * [Register function](#register-function)
-  * [Worker events](#worker-events)
+ * [Register function](#register-function)
+ * [Worker events](#worker-events)
+* [Job](#job)
+ * [Job events](#job-events)
+* [Multiple servers](#multiple-servers)
 * [Error handling](#error-handling)
 
 ### Client
@@ -183,27 +186,6 @@ and methods
 * reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
 * sendData - send data before job completes [Worker]
 
-
-### Multiple Job Servers
-
-#### Load Balancing
-
-+ default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
-+ `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
-
-```javascript
-// default load balancer
-client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
-
-// desired load balancer
-client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
-```
-
-#### JobServer events
-* **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
-* **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
-* **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
-
 #### Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
 * **status** - to update status information of a submitted jobs [Client]
@@ -217,6 +199,32 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBal
 * **error** - when communication with job server failed [Client/Worker]
 
 
+### Job server
+
+#### JobServer events
+* **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
+* **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
+* **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
+
+
+### Multiple servers
+Many of Gearman job servers can be started for both high-availability and load balancing.
+
+[Client](#client) is able to communicate with multiple servers with one of the following load balancing strategy:
+
+* default mode is `Sequence` which calls job server nodes in the order of nodes defined by the client initialization (next node will be used if the current one fails)
+* `RoundRobin` assigns work in round-robin order per nodes defined by the client initialization.
+
+```javascript
+// default load balancer
+client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
+
+// desired load balancer
+client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
+```
+
+[Worker](#worker) can be initialized with multiple servers in order to register a function on each of them.
+
 ### Error handling
 Although exceptions are supported in JavaScript and they can be used to communicate an error, due to asynchronous concept of Node.js it can be a bad idea.
 According to Node.js best practices following error handling is introduced in GearmaNode.
@@ -226,7 +234,7 @@ A synchronous code returns an `Error` object if something goes wrong. This happe
 
 #### Asynchronous errors
 In asynchronous code an error event will be emitted via `EventEmitter` on corresponding object if something goes wrong.
-This happens mostly by network communication or if a gearman service fails.
+This happens mostly by network communication failure or if a gearman service fails.
 
 
 ## Tests
