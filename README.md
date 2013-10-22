@@ -23,13 +23,15 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 
 ## Installation
 
-    > npm install gearmaNode
+    > npm install GearmaNode
 
 
 ## Usage
-See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
+See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.  
+See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.
 
 * [Client](#client)
+  * [Submitting job](#submitting-job)
   * [Client events](#client-events)
 * [Worker](#worker)
   * [Worker events](#worker-events)
@@ -45,8 +47,13 @@ var gearmanode = require('gearmanode');
 var client = gearmanode.client();
 ```
 
-By default, the jobserver is expected on `localhost:4730`. More detailed configuration can be defined as follows:
+By default, the job server is expected on `localhost:4730`. Following options can be used for detailed configuration of the client:
 
+ * **host** {string} hostname of single job server, *Optional*
+ * **port** {number} port of single job server, *Optional*
+ * **servers** {array} array of host,port pairs of multiple job servers, *Optional*
+ * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy, *Optional*
+ * **recoverTime** {number} delay in seconds before retrying the downed job server, *Optional* @TODO
 
 ```javascript
 // special port
@@ -59,7 +66,8 @@ client = gearmanode.client({servers: [{host: 'foo.com', port: 4731}, {host: 'bar
 client = gearmanode.client({servers: [{host: 'foo.com'}, {port: 4731}]});
 ```
 
-A client issues a request when job needs to be run. Following options can be used for detailed settings of the job
+#### Submitting job
+A client issues a request when job needs to be run. Following options can be used for detailed configuration of the job:
 
 * **name** {string} name of the function, *Mandatory*
 * **payload** {string|Buffer} transmited data, *Mandatory* @TODO Buffer
@@ -92,7 +100,7 @@ job.on('complete', function() {
 
 A client object should be closed if no more needed to release all its associated resources and socket connections. See the sample above.
 
-### Client events
+#### Client events
 * **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
 * **done** - when there's no submited job more waiting for state CREATED
 * **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
@@ -100,6 +108,29 @@ A client object should be closed if no more needed to release all its associated
 * **close** - when Client#close() called to end the client for future use and to release all its associated resources
 * **jobServerError** - whenever an associated job server encounters an error and needs to notify the client, has parameters **jobServerUid**, **code**, **message**
 * **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
+
+
+### Worker
+*The worker performs the work requested by the client and sends a response to the client through the job server.*  
+-- Gearman Documentation --  
+
+Instance of class `Worker` must be created to connect a Gearman job server(s), where it then informs the server(s) of all different functions the Worker is capable of doing.
+
+```javascript
+var worker = gearmanode.worker();
+worker.addFuntion('reverse', function (job) {
+    var rslt = job.payload.toString().split("").reverse().join("");
+    job.workComplete(rslt);
+});
+```
+By default, the job server is expected on `localhost:4730`. Following options can be used for detailed configuration of the worker:
+
+AAA
+
+#### Worker events
+* **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
+* **jobServerError** - whenever an associated job server encounters an error and needs to notify the worker, has parameters **jobServerUid**, **code**, **message**
+* **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 
 ## Job
@@ -125,18 +156,6 @@ and methods
 * reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
 * sendData - send data before job completes [Worker]
 
-
-### Worker
-*The worker performs the work requested by the client and sends a response to the client through the job server.*  
--- Gearman Documentation --  
-
-```javascript
-var worker = gearmanode.worker();
-worker.addFuntion('reverse', function (job) {
-    var rslt = job.payload.toString().split("").reverse().join("");
-    job.workComplete(rslt);
-});
-```
 
 ### Multiple Job Servers
 
@@ -170,10 +189,6 @@ client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBal
 * **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
 * **error** - when communication with job server failed [Client/Worker]
 
-## Worker events
-* **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
-* **jobServerError** - whenever an associated job server encounters an error and needs to notify the worker, has parameters **jobServerUid**, **code**, **message**
-* **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 ## Worker
 
