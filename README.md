@@ -13,7 +13,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
  * @TODO (RESET_ABILITIES, SET_CLIENT_ID, CAN_DO_TIMEOUT, ALL_YOURS, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
- * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server) @TODO
+ * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
 * support for miscellaneous string encoding supported by Node.js `Buffer` class
 * careful API documentation
 * rock solid tests
@@ -58,7 +58,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **port** {number} port of single job server
  * **servers** {array} array of host,port pairs of multiple job servers
  * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy
- * **recoverTime** {number} delay in seconds before retrying the downed job server @TODO
+ * **recoverTime** {number} delay in miliseconds before retrying the downed job server
 
 ```javascript
 // special port
@@ -219,8 +219,8 @@ Many of Gearman job servers can be started for both high-availability and load b
 // default load balancer
 client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}] });
 
-// desired load balancer
-client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin' });
+// desired load balancer and recover time
+client = gearmanode.client({ servers: [{host: 'foo.com'}, {port: 4731}], loadBalancing: 'RoundRobin', recoverTime: 10000 });
 ```
 
 [Worker](#worker) can be initialized with multiple servers in order to register a function on each of them.

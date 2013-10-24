@@ -15,6 +15,21 @@ describe('load-balancing', function() {
     describe('#LBStrategy', function() {
 
 
+        describe('#constructor', function() {
+            it('should return error when violated validation', function() {
+                // duplicate servers
+                lb = new Sequence();
+                lb.should.be.an.instanceof(Error);
+                lb = new Sequence('foo');
+                lb.should.be.an.instanceof(Error);
+                lb = new RoundRobin();
+                lb.should.be.an.instanceof(Error);
+                lb = new RoundRobin('foo');
+                lb.should.be.an.instanceof(Error);
+            })
+        })
+
+
         describe('#badOne', function() {
             it('should store given index with timestamp', function() {
                 Object.keys(lb.badNodes).length.should.equal(0);
@@ -93,6 +108,28 @@ describe('load-balancing', function() {
             })
         })
 
+    })
+
+
+    describe('#recoverTime', function() {
+        it('should try failed nodes again after recover time', function(node) {
+            lb.recoverTime = 20;
+            lb.badOne(0);
+            lb.badOne(1);
+            Object.keys(lb.badNodes).length.should.equal(2);
+            lb.badNodes.hasOwnProperty(0).should.be.true;
+            lb.badNodes.hasOwnProperty(1).should.be.true;
+            should.not.exist(lb.nextIndex());
+            setTimeout(function() {
+                lb.badNodes.hasOwnProperty(0).should.be.true;
+                lb.badNodes.hasOwnProperty(1).should.be.true;
+                lb.nextIndex();
+                Object.keys(lb.badNodes).length.should.equal(0);
+                lb.badNodes.hasOwnProperty(0).should.be.false;
+                lb.badNodes.hasOwnProperty(1).should.be.false;
+                node();
+            }, 30);
+        })
     })
 
 })

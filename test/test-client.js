@@ -32,12 +32,17 @@ describe('Client', function() {
             // unknown load balancing strategy
             c = gearmanode.client({ loadBalancing: 'AlfaBravo' });
             c.should.be.an.instanceof(Error);
+            // recoverTime not number
+            c = gearmanode.client({ recoverTime: '10' });
+            c.should.be.an.instanceof(Error);
         })
         it('should set correct load balancer', function() {
             should.exist(c.loadBalancer);
             c.loadBalancer.should.be.an.instanceof(lb.Sequence);
-            c = gearmanode.client({ loadBalancing: 'RoundRobin' });
+            c.loadBalancer.recoverTime.should.equal(30000);
+            c = gearmanode.client({ loadBalancing: 'RoundRobin', recoverTime: 100 });
             c.loadBalancer.should.be.an.instanceof(lb.RoundRobin);
+            c.loadBalancer.recoverTime.should.equal(100);
         })
     })
 
