@@ -67,11 +67,11 @@ describe('Job', function() {
         it('should clean up object', function() {
             j.handle = 'H:localhost:22';
             j.processing = true;
-            j.clientOrWorker.jobs[j.handle] = j;
+            j.clientOrWorker.jobs[j.getUid()] = j;
             j.close();
             j.processing.should.be.false;
             j.closed.should.be.true;
-            should.not.exist(c.jobs[j.handle]);
+            should.not.exist(c.jobs[j.getUid()]);
         })
         it('should emit event on itself', function() {
             j.close();
