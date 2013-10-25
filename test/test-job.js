@@ -23,6 +23,7 @@ describe('Job', function() {
             j.background.should.be.false;
             j.priority.should.equal('NORMAL');
             j.encoding.should.equal('utf8');
+            should.exist(j.uuid);
             should.not.exist(j.jobServer);
         })
         it('should return special instance of Job', function() {
