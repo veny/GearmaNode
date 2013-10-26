@@ -38,6 +38,8 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
  * [Worker events](#worker-events)
 * [Job](#job)
  * [Job events](#job-events)
+* [Job server](#job-server)
+ * [Job server events](#job-server-events)
 * [Multiple servers](#multiple-servers)
 * [Error handling](#error-handling)
 
@@ -178,13 +180,13 @@ The `job` has following getters
 
 and methods
 
-* getStatus - sends request to get status of a background job [Client]
-* workComplete - sends a notification to the server (and any listening clients) that the job completed successfully [Worker]
-* reportStatus - reports job's status to the job server [Worker]
-* reportWarning - sends a warning explicitly to the job server [Worker] @TODO
-* reportError - to indicate that the job failed [Worker]
-* reportException - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
-* sendData - send data before job completes [Worker]
+* **getStatus** - sends request to get status of a background job [Client]
+* **workComplete** - sends a notification to the server (and any listening clients) that the job completed successfully [Worker]
+* **reportStatus** - reports job's status to the job server [Worker]
+* **reportWarning** - sends a warning explicitly to the job server [Worker] @TODO
+* **reportError** - to indicate that the job failed [Worker]
+* **reportException** - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
+* **sendData** - send data before job completes [Worker]
 
 #### Job events
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
@@ -200,8 +202,25 @@ and methods
 
 
 ### Job server
+Class `JobServer` represents an abstraction to Gearman job server (gearmand).
+Accessible job server(s) are stored in array `jobServer` on instance of Client/Worker.
+The class introduces following methods:
 
-#### JobServer events
+* **echo** - sends the job server request that will be echoed back in response
+* **setOption** - sends the job server request to set an option for the connection in the job server
+
+```javascript
+var client = gearmanode.client();
+var js = client.jobServers[0];
+
+js.once('echo', function(resp) {
+    console.log('ECHO: response=' + resp);
+    client.close();
+});
+js.echo('ping')
+```
+
+#### Job server events
 * **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
 * **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
 * **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
@@ -235,6 +254,11 @@ A synchronous code returns an `Error` object if something goes wrong. This happe
 #### Asynchronous errors
 In asynchronous code an error event will be emitted via `EventEmitter` on corresponding object if something goes wrong.
 This happens mostly by network communication failure or if a gearman service fails.
+
+
+## Class diagram
+
+[![](https://raw.github.com/veny/GearmaNode/master/ooad/Classes.png)](https://raw.github.com/veny/GearmaNode/master/ooad/Classes.png)
 
 
 ## Tests
