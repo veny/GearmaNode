@@ -156,7 +156,7 @@ worker.addFunction('reverse', function (job) {
     job.workComplete(rslt);
 });
 ```
-
+It tries to connect to ALL job servers and fires `error` if one registration fails.
 A registered function can be unregistered via `worker#removeFunction`.
 
 #### Worker events
