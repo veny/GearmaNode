@@ -186,9 +186,9 @@ describe('JobServer', function() {
                 js.connect.calledOnce.should.be.true;
             })
         })
-        it('should emit error on client/worker when sending fails', function(done) {
+        it('should emit `js_econnrefused` on client when sending fails due to connection', function(done) {
             js.port = 1;
-            js.clientOrWorker.once('error', function(err) {
+            js.clientOrWorker.once('js_econnrefused', function(err) {
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
                 done();

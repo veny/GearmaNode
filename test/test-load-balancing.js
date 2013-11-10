@@ -1,6 +1,8 @@
 
 var should     = require('should'),
     util       = require('util'),
+    sinon      = require('sinon'),
+    gearmanode = require('../lib/gearmanode'),
     Sequence   = require('../lib/gearmanode/load-balancing').Sequence,
     RoundRobin = require('../lib/gearmanode/load-balancing').RoundRobin;
 
@@ -129,6 +131,24 @@ describe('load-balancing', function() {
                 lb.badNodes.hasOwnProperty(1).should.be.false;
                 node();
             }, 30);
+        })
+    })
+
+
+
+    describe('#BF', function() {
+        it('should try to submit job through second job server if the first not running', function(done) {
+            var c = gearmanode.client({servers: [{port: 4731}, {}]});
+            var job = c.submitJob('reverse', 'hello world!');
+
+            c.once('js_econnrefused', function(err) {
+                should.exist(err);
+                err.should.be.an.instanceof(Error);
+                done();
+            });
+            job.once('submited', function() {
+                job.jobServerUid.should.equal('localhost:4730');
+            });
         })
     })
 
