@@ -76,17 +76,22 @@ describe('Client', function() {
             job.payload.should.equal('hi');
             job.name.should.equal('reverse');
             job.processing.should.be.true;
-            job.jobServerUid.should.equal(js.getUid());
+            should.not.exist(job.jobServerUid);
         })
         it('should return error if bad parameters', function() {
             c.submitJob().should.be.an.instanceof(Error);
             c.submitJob('reverse').should.be.an.instanceof(Error);
         })
-        it('should set many managing values', function() {
-            var job = c.submitJob('reverse', 'hi');
+        it('should emit `submited` if job sent to server', function(done) {
             js = c.jobServers[0];
-            js.jobsWaiting4Created.length.should.equal(1);
-            js.jobsWaiting4Created[0].should.equal(job);
+            var job = c.submitJob('reverse', 'hi');
+            js.jobsWaiting4Created.length.should.equal(0);
+            job.once('submited', function() {
+                job.jobServerUid.should.equal(js.getUid());
+                js.jobsWaiting4Created.length.should.equal(1);
+                js.jobsWaiting4Created[0].should.equal(job);
+                done();
+            });
         })
         it('should emit error if submiting fails', function(done) {
             c = gearmanode.client({port: 1});
@@ -184,7 +189,6 @@ describe('Client', function() {
                     c.emit.calledTwice.should.be.true; // error + disconnect
                     done();
                 })
-
             })
         })
     })

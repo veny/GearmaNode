@@ -174,7 +174,7 @@ The `job` has following getters
 
 * **name** - name of the function, [Client/Worker]
 * **payload** - transmited/received data (Buffer or String) [Client/Worker]
-* **jobServerUid** - unique identification of the job server that transmited the job [Client/Worker]
+* **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
 * **encoding** - encoding to use [Client]
 
@@ -189,6 +189,7 @@ and methods
 * **sendData** - send data before job completes [Worker]
 
 #### Job events
+* **submited** - when job submited via a job server; server UID stored on the job [Client]
 * **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
