@@ -1,5 +1,5 @@
 {
-  "name": "GearmaNode",
+  "name": "gearmanode",
   "version": "0.1.0",
   "description": "Node.js library for the Gearman distributed job system",
   "keywords": ["gearman", "distributed"],
