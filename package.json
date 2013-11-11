@@ -2,7 +2,7 @@
   "name": "gearmanode",
   "version": "0.1.0",
   "description": "Node.js library for the Gearman distributed job system",
-  "keywords": ["gearman", "distributed"],
+  "keywords": ["gearman", "distributed", "message queue", "job", "worker"],
   "author": "Vaclav Sykora <vaclav.sykora@gmail.com>",
   "main": "./lib/gearmanode",
   "repository": {
