@@ -26,6 +26,9 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
     > npm install GearmaNode
 
 
+## Changelog
+See [version.js](https://github.com/veny/GearmaNode/tree/master/lib/gearmanode/version.js) for detailed changelog.
+
 ## Usage
 See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.  
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
