@@ -5,7 +5,7 @@
 var gearmanode = require('../lib/gearmanode');
 
 //gearmanode.Client.logger.transports.console.level = 'info';
-var limit = 30000;
+var limit = 300;
 var timeout = 100;
 
 // Foreground Job

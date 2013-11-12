@@ -5,6 +5,7 @@ var gearmanode = require('../lib/gearmanode');
 // Foreground Job
 var worker = gearmanode.worker();
 worker.addFunction('reverse', function (job) {
+    job.sendWorkData(job.payload); // mirror input as partial result
     var rslt = job.payload.toString().split("").reverse().join("");
     job.workComplete(rslt);
 });
@@ -32,7 +33,8 @@ worker.addFunction('reverse', function (job) {
 // Job#reportError (for background jobs)
 // var worker = gearmanode.worker();
 // worker.addFunction('reverse', function (job) {
-//     job.reportError();
+// //    job.reportError();
 // //    job.reportException('delta alfa');
-// //    job.workComplete('OIIUSHDF');
+//     job.reportWarning('delta alfa');
+//     job.workComplete('OIIUSHDF');
 // });
