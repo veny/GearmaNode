@@ -270,7 +270,7 @@ This happens mostly by network communication failure or if a gearman service fai
 
 #### Logger
 `Winston` library is used for logging. See the [project page](https://github.com/flatiron/winston) for details.
-You can configure in this way:
+You can configure the logger in this way:
 
 ```javascript
 gearmanode.Client.logger.transports.console.level = 'info';
