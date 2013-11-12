@@ -118,10 +118,20 @@ describe('Worker', function() {
         })
 
 
+        describe('#sendWorkData', function() {
+            it('should send packet to job server', function() {
+                j.sendWorkData('foo');
+                w.jobServers[0].send.calledOnce.should.be.true;
+                should.not.exist(j.closed);
+            })
+        })
+
+
         describe('#reportStatus', function() {
             it('should send packet to job server', function() {
                 j.reportStatus(1, 2);
                 w.jobServers[0].send.calledOnce.should.be.true;
+                should.not.exist(j.closed);
             })
             it('should validate given parameters', function() {
                 j.reportStatus().should.be.an.instanceof(Error);
@@ -130,6 +140,15 @@ describe('Worker', function() {
                 j.reportStatus(1, '').should.be.an.instanceof(Error);
                 j.reportStatus('1', '2').should.be.an.instanceof(Error);
                 w.jobServers[0].send.called.should.be.false;
+            })
+        })
+
+
+        describe('#reportWarning', function() {
+            it('should send packet to job server', function() {
+                j.reportWarning('foo');
+                w.jobServers[0].send.calledOnce.should.be.true;
+                should.not.exist(j.closed);
             })
         })
 
