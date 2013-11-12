@@ -61,7 +61,7 @@ describe('Client', function() {
         it('should emit event on itself', function() {
             c.close();
             c.emit.calledTwice.should.be.true; // diconnect + close
-            c.emit.getCall(0).args[0].should.equal('disconnect');
+            c.emit.getCall(0).args[0].should.equal('socketDisconnect');
             c.emit.getCall(1).args[0].should.equal('close');
         })
     })

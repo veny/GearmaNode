@@ -62,7 +62,7 @@ describe('JobServer', function() {
             js.clientOrWorker.emit = sinon.spy();
             js.connect(function() {
                 js.clientOrWorker.emit.calledOnce.should.be.true;
-                js.clientOrWorker.emit.calledWith('js_connect').should.be.true;
+                js.clientOrWorker.emit.calledWith('socketConnect').should.be.true;
                 js.clientOrWorker.emit.getCall(0).args[1].should.equal(js.getUid());
                 done();
             })
@@ -96,6 +96,7 @@ describe('JobServer', function() {
             var socket = js.connect(function(err, jobServer) {
                 should.not.exist(err);
                 js.connected.should.be.true;
+                js.socket.listeners('connect').length.should.equal(2); // one is mine, the other from some infrastructure
                 js.disconnect();
                 js.connected.should.be.false;
                 should.not.exist(js.socket);
@@ -109,7 +110,7 @@ describe('JobServer', function() {
             js.connect(function() {
                 js.disconnect();
                 js.clientOrWorker.emit.calledTwice.should.be.true; // connect + disconnect
-                js.clientOrWorker.emit.getCall(1).args[0].should.equal('disconnect');
+                js.clientOrWorker.emit.getCall(1).args[0].should.equal('socketDisconnect');
                 js.clientOrWorker.emit.getCall(1).args[1].should.equal(js.getUid());
                 done();
             })
@@ -186,9 +187,11 @@ describe('JobServer', function() {
                 js.connect.calledOnce.should.be.true;
             })
         })
-        it('should emit `js_econnrefused` on client when sending fails due to connection', function(done) {
+        it('should emit `socketError` on client when sending fails due to connection', function(done) {
             js.port = 1;
-            js.clientOrWorker.once('js_econnrefused', function(err) {
+            js.clientOrWorker.once('socketError', function(uid, err) {
+                uid.should.equal('localhost:1');
+                should.exist(err);
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
                 done();

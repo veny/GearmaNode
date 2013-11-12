@@ -141,13 +141,38 @@ describe('load-balancing', function() {
             var c = gearmanode.client({servers: [{port: 4731}, {}]});
             var job = c.submitJob('reverse', 'hello world!');
 
-            c.once('js_econnrefused', function(err) {
+            c.once('socketError', function(uid, err) {
+                uid.should.equal('localhost:4731');
                 should.exist(err);
                 err.should.be.an.instanceof(Error);
+                err.code.should.be.equal('ECONNREFUSED');
                 done();
             });
             job.once('submited', function() {
                 job.jobServerUid.should.equal('localhost:4730');
+            });
+        })
+        it('#4: failure of existing server connection should cause load balancing to other one', function(done) {
+            var c = gearmanode.client({servers: [{}, {port: 4731}]});
+            c.jobServers[0].connect(function(err) {
+                should.not.exist(err); // successfully connection
+                c.jobServers[0].connected.should.be.true;
+                c.jobServers[0].socket.emit('end', {code: 'EPIPE'}); // simulate termination of connection by other end
+            });
+            c.once('error', function(err) { // all servers fails -> there should be emitted an error
+                should.exist(err);
+                err.should.be.an.instanceof(Error);
+            });
+            c.once('socketDisconnect', function(uid30) { // invoked if connection forcely terminated by my `emit('end')`
+                uid30.should.equal('localhost:4730');
+                c.once('socketError', function(uid31, err) { // connection failure is expected
+                    uid31.should.equal('localhost:4731');
+                    should.exist(err);
+                    err.should.be.an.instanceof(Error);
+                    err.code.should.be.equal('ECONNREFUSED');
+                    done();
+                 });
+                 c.submitJob('reverse', 'hi');
             });
         })
     })

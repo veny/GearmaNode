@@ -17,7 +17,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 * support for miscellaneous string encoding supported by Node.js `Buffer` class
 * careful API documentation
 * rock solid tests
- * currently more than 90 test scenarios and 300 asserts
+ * currently more than 100 test scenarios and 350 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
@@ -112,13 +112,12 @@ job.on('complete', function() {
 A client object should be closed if no more needed to release all its associated resources and socket connections. See the sample above.
 
 #### Client events
-* **submit** - when a job has been submited to job server, has parameter 'number of jobs waiting for response CREATED'
-* **done** - when there's no submited job more waiting for state CREATED
-* **connect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
-* **disconnect** - when connection to a job server terminated (by timeout if not used or forcible by client), has parameter **job server UID**
+* **socketConnect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
+* **socketDisconnect** - when connection to a job server terminated, has parameter **job server UID** and optional **Error** in case of an unexpected wrong termination
+* **socketError** - when a socket problem occurs (connection failure, broken pipe, connection terminated by other end, ...), has parameter **job server UID** and **Error**
+* **jobServerError** - when an associated job server encounters an error and needs to notify the client with packet ERROR (19), has parameters **jobServerUid**, **code**, **message**
 * **close** - when Client#close() called to end the client for future use and to release all its associated resources
-* **jobServerError** - whenever an associated job server encounters an error and needs to notify the client, has parameters **jobServerUid**, **code**, **message**
-* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
+* **error** - when an unrecoverable error occured (e.g. illegal client's state, malformed data ...), has parameter **Error**
 
 
 ### Worker
@@ -163,8 +162,11 @@ It tries to connect to ALL job servers and fires `error` if one registration fai
 A registered function can be unregistered via `worker#removeFunction`.
 
 #### Worker events
+* **socketConnect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
+* **socketDisconnect** - when connection to a job server terminated, has parameter **job server UID** and optional **Error** in case of an unexpected wrong termination
+* **socketError** - when a socket problem occurs (connection failure, broken pipe, connection terminated by other end, ...), has parameter **job server UID** and **Error**
+* **jobServerError** - whenever an associated job server encounters an error and needs to notify the worker with packet ERROR (19), has parameters **jobServerUid**, **code**, **message**
 * **close** - when Worker#close() called to close the worker for future use and to release all its associated resources
-* **jobServerError** - whenever an associated job server encounters an error and needs to notify the worker, has parameters **jobServerUid**, **code**, **message**
 * **error** - when a fatal error occurred while processing job (e.g. illegal worker's state, socket problem, ...) or job server encounters an error and needs to notify client, has parameter **Error**
 
 

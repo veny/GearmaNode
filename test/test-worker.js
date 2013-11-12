@@ -44,7 +44,7 @@ describe('Worker', function() {
         it('should emit event on itself', function() {
             w.close();
             w.emit.calledTwice.should.be.true; // diconnect + close
-            w.emit.getCall(0).args[0].should.equal('disconnect');
+            w.emit.getCall(0).args[0].should.equal('socketDisconnect');
             w.emit.getCall(1).args[0].should.equal('close');
         })
     })
