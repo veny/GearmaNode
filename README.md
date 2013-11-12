@@ -187,8 +187,9 @@ and methods
 
 * **getStatus** - sends request to get status of a background job [Client]
 * **workComplete** - sends a notification to the server (and any listening clients) that the job completed successfully [Worker]
+* **sendWorkData** - sends updates or partial results [Worker]
 * **reportStatus** - reports job's status to the job server [Worker]
-* **reportWarning** - sends a warning explicitly to the job server [Worker] @TODO
+* **reportWarning** - sends a warning explicitly to the job server [Worker]
 * **reportError** - to indicate that the job failed [Worker]
 * **reportException** - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
 * **sendData** - send data before job completes [Worker]
@@ -199,6 +200,8 @@ and methods
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
+* **workData** - to update the client with partial data from a running job [Client]
+* **warning** - to update the client with a warning [Client]
 * **complete** - when the non-background job completed successfully [Client]
 * **failed** - when a job has been canceled by invoking Job#reportError on worker side [Client]
 * **exception** - when the job failed with the an exception, has parameter **text of exception** [Client]
