@@ -45,6 +45,8 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
  * [Job server events](#job-server-events)
 * [Multiple servers](#multiple-servers)
 * [Error handling](#error-handling)
+* [Configuration](#configuration)
+ * [Logger](#logger)
 
 ### Client
 *The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*  
@@ -263,6 +265,16 @@ A synchronous code returns an `Error` object if something goes wrong. This happe
 #### Asynchronous errors
 In asynchronous code an error event will be emitted via `EventEmitter` on corresponding object if something goes wrong.
 This happens mostly by network communication failure or if a gearman service fails.
+
+### Configuration
+
+#### Logger
+`Winston` library is used for logging. See the [project page](https://github.com/flatiron/winston) for details.
+You can configure in this way:
+
+```javascript
+gearmanode.Client.logger.transports.console.level = 'info';
+````
 
 
 ## Class diagram
