@@ -31,7 +31,39 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 ## Changelog
 See [version.js](https://github.com/veny/GearmaNode/tree/master/lib/gearmanode/version.js) for detailed changelog.
 
+
 ## Usage
+
+### Client
+
+```javascript
+var gearmanode = require('../lib/gearmanode');
+var client = gearmanode.client();
+
+var job = client.submitJob('reverse', 'hello world!');
+job.on('workData', function(data) {
+    console.log('WORK_DATA >>> ' + data);
+});
+job.on('complete', function() {
+    console.log('RESULT >>> ' + job.response);
+    client.close();
+});
+```
+
+### Worker
+
+```javascript
+var gearmanode = require('../lib/gearmanode');
+var worker = gearmanode.worker();
+
+worker.addFunction('reverse', function (job) {
+    job.sendWorkData(job.payload); // mirror input as partial result
+    job.workComplete(job.payload.toString().split("").reverse().join(""));
+});
+```
+
+### TOC
+
 See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.  
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
