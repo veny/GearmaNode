@@ -37,7 +37,7 @@ See [version.js](https://github.com/veny/GearmaNode/tree/master/lib/gearmanode/v
 ### Client
 
 ```javascript
-var gearmanode = require('../lib/gearmanode');
+var gearmanode = require('gearmanode');
 var client = gearmanode.client();
 
 var job = client.submitJob('reverse', 'hello world!');
@@ -53,7 +53,7 @@ job.on('complete', function() {
 ### Worker
 
 ```javascript
-var gearmanode = require('../lib/gearmanode');
+var gearmanode = require('gearmanode');
 var worker = gearmanode.worker();
 
 worker.addFunction('reverse', function (job) {
