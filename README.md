@@ -5,7 +5,7 @@
            \____|\___|\__,_|_|  |_| |_| |_|\__,_|_| \_|\___/ \__,_|\___|
 
 
-Node.js library for the [Gearman](http://gearman.org/) distributed job system.
+Node.js library for the [Gearman](http://gearman.org/) distributed job system with support for multiple servers.
 
 
 ## Features
