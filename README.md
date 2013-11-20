@@ -23,7 +23,9 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system.
 
 ## Installation
 
-    > npm install GearmaNode
+    > npm install gearmanode
+
+* Node package published here: https://npmjs.org/package/gearmanode
 
 
 ## Changelog
