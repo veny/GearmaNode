@@ -10,7 +10,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 ## Features
 * fully implemented Gearman Protocol
- * @TODO (RESET_ABILITIES, SET_CLIENT_ID, CAN_DO_TIMEOUT, ALL_YOURS, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
+ * @TODO (RESET_ABILITIES, SET_CLIENT_ID, CAN_DO_TIMEOUT, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
@@ -64,7 +64,7 @@ worker.addFunction('reverse', function (job) {
 
 ### TOC
 
-See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.  
+See [Geaman Manual](http://gearman.org/manual) to understand generic Gearman concepts.
 See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for more detailed samples.
 
 * [Client](#client)
@@ -83,8 +83,8 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
  * [Logger](#logger)
 
 ### Client
-*The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*  
--- Gearman Documentation --  
+*The client is responsible for creating a job to be run and sending it to a job server. The job server will find a suitable worker that can run the job and forwards the job on.*
+-- Gearman Documentation --
 
 Instance of class `Client` must be created to connect a Gearman job server(s) and to make requests to perform some function on provided data.
 
@@ -157,8 +157,8 @@ A client object should be closed if no more needed to release all its associated
 
 
 ### Worker
-*The worker performs the work requested by the client and sends a response to the client through the job server.*  
--- Gearman Documentation --  
+*The worker performs the work requested by the client and sends a response to the client through the job server.*
+-- Gearman Documentation --
 
 Instance of class `Worker` must be created to connect a Gearman job server(s), where it then informs the server(s) of all different functions the Worker is capable of doing.
 
@@ -195,7 +195,10 @@ worker.addFunction('reverse', function (job) {
 });
 ```
 It tries to connect to ALL job servers and fires `error` if one registration fails.
+
 A registered function can be unregistered via `worker#removeFunction`.
+Call `Worker#resetAbilities` to notify the server(s) that the worker is no longer able to do any functions it previously registered.
+
 
 #### Worker events
 * **socketConnect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
