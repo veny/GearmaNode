@@ -10,7 +10,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 ## Features
 * fully implemented Gearman Protocol
- * @TODO (RESET_ABILITIES, SET_CLIENT_ID, CAN_DO_TIMEOUT, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
+ * @TODO (SET_CLIENT_ID, CAN_DO_TIMEOUT, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
@@ -34,7 +34,7 @@ See [version.js](https://github.com/veny/GearmaNode/tree/master/lib/gearmanode/v
 
 ## Usage
 
-### Client
+* **Client**
 
 ```javascript
 var gearmanode = require('gearmanode');
@@ -50,7 +50,7 @@ job.on('complete', function() {
 });
 ```
 
-### Worker
+* **Worker**
 
 ```javascript
 var gearmanode = require('gearmanode');
