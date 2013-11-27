@@ -85,7 +85,7 @@ describe('Worker', function() {
 
 
     describe('#removeFunction', function() {
-        it('should unset many managing values', function() { 
+        it('should unset many managing values', function() {
            w.addFunction('reverse', function() {});
             w.removeFunction('reverse');
             Object.keys(w.functions).length.should.equal(0);
@@ -100,6 +100,19 @@ describe('Worker', function() {
             w.removeFunction(undefined).should.be.an.instanceof(Error);
             w.removeFunction(null).should.be.an.instanceof(Error);
             w.removeFunction('').should.be.an.instanceof(Error);
+        })
+        it('should send packet to job server', function() {
+            w.addFunction('foo', function() {});
+            w.removeFunction('foo');
+            w.jobServers[0].send.calledTwice.should.be.true; // add + remove
+        })
+    })
+
+
+    describe('#resetAbilities', function() {
+        it('should send packet to job server', function() {
+            w.resetAbilities();
+            w.jobServers[0].send.calledOnce.should.be.true;
         })
     })
 
