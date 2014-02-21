@@ -2,6 +2,7 @@ var should     = require('should'),
     sinon      = require('sinon'),
     events     = require('events'),
     gearmanode = require('../lib/gearmanode'),
+    protocol   = require('../lib/gearmanode/protocol'),
     Worker     = gearmanode.Worker,
     Job        = gearmanode.Job,
     JobServer  = require('../lib/gearmanode/job-server').JobServer;
@@ -80,6 +81,22 @@ describe('Worker', function() {
         })
         it('should return error when no callback given', function() {
             w.addFunction('reverse').should.be.an.instanceof(Error);
+        })
+        it('should send corresponding packet', function(done) {
+            w.jobServers[0].send = function(buff) {
+                var packetType = buff.readUInt32BE(4);
+                packetType.should.equal(protocol.PACKET_TYPES.CAN_DO);
+                done();
+            }
+            w.addFunction('reverse', function() {});
+        })
+        it('with timeout should send corresponding packet', function(done) {
+            w.jobServers[0].send = function(buff) {
+                var packetType = buff.readUInt32BE(4);
+                packetType.should.equal(protocol.PACKET_TYPES.CAN_DO_TIMEOUT);
+                done();
+            }
+            w.addFunction('reverse', function() {}, {timeout: 10});
         })
     })
 
