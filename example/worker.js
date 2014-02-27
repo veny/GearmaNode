@@ -3,12 +3,24 @@ var gearmanode = require('../lib/gearmanode');
 
 
 // Foreground Job
+// var worker = gearmanode.worker();
+// worker.addFunction('reverse', function (job) {
+//     job.sendWorkData(job.payload); // mirror input as partial result
+//     var rslt = job.payload.toString().split("").reverse().join("");
+//     job.workComplete(rslt);
+// });
+
+
+// Foreground Job with Timeout
 var worker = gearmanode.worker();
 worker.addFunction('reverse', function (job) {
-    job.sendWorkData(job.payload); // mirror input as partial result
-    var rslt = job.payload.toString().split("").reverse().join("");
-    job.workComplete(rslt);
-});
+    console.log("payload>>> " + job.payload);
+    setTimeout(function() {
+        console.log('WAKE UP');
+        var rslt = job.payload.toString().split("").reverse().join("");
+        job.workComplete(rslt);
+    }, 12000);
+}, {timeout: 10});
 
 
 // Background Job

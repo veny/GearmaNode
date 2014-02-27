@@ -179,7 +179,7 @@ A function the worker is able to perform can be registered via `worker#addFuncti
 where `name` is a symbolic name of the function, `callback` is a function to be run when a job will be received
 and `options` are additional options as follows:
 
-* **timeout** {number}  timeout value in seconds, the job server will mark the job as failed and notify any listening clients @TODO
+* **timeout** {number} timeout value in seconds on how long the job is allowed to run, thereafter the job server will mark the job as failed and notify any listening clients
 * **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer` @TODO
 
 The worker function `callback` gets parameter [Job](#job) which is:
