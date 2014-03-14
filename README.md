@@ -8,6 +8,9 @@
 Node.js library for the [Gearman](http://gearman.org/) distributed job system with support for multiple servers.
 
 
+[![Build Status](https://secure.travis-ci.org/veny/GearmaNode.png)](http://travis-ci.org/veny/GearmaNode)
+
+
 ## Features
 * fully implemented Gearman Protocol
  * @TODO (SET_CLIENT_ID, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
