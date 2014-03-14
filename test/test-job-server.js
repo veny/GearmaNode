@@ -150,7 +150,7 @@ describe('JobServer', function() {
         it('should emit server error on itself if option is unknown', function(done) {
             js.clientOrWorker.emit = sinon.spy();
             js.once('jobServerError', function(code, msg) {
-                code.should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
+                code.toUpperCase().should.equal(protocol.CONSTANTS.UNKNOWN_OPTION); // toUpperCase -> some version of gearmand returns message as lower case
                 js.clientOrWorker.emit.calledTwice.should.be.true; // connect + error, emit on Job Server after emit on Client/Worker
                 js.clientOrWorker.emit.getCall(1).args[0].should.equal('jobServerError');
                 js.clientOrWorker.emit.getCall(1).args[1].should.equal(js.getUid());
@@ -163,7 +163,7 @@ describe('JobServer', function() {
             js.emit = sinon.spy();
             c.once('jobServerError', function(uid, code, msg) {
                 uid.should.equal(js.getUid());
-                code.should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
+                code.toUpperCase().should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
                 js.emit.callCount.should.equal(0); // emit on Job Server after emit on Client/Worker
                 done();
             });
