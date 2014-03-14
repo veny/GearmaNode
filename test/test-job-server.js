@@ -154,7 +154,7 @@ describe('JobServer', function() {
                 js.clientOrWorker.emit.calledTwice.should.be.true; // connect + error, emit on Job Server after emit on Client/Worker
                 js.clientOrWorker.emit.getCall(1).args[0].should.equal('jobServerError');
                 js.clientOrWorker.emit.getCall(1).args[1].should.equal(js.getUid());
-                js.clientOrWorker.emit.getCall(1).args[2].should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
+                js.clientOrWorker.emit.getCall(1).args[2].toUpperCase().should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
                 done();
             });
             js.setOption('foo');
