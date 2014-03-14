@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "0.10"
+
+before_install:
+  - "sudo apt-get install gearman"
+
+services:
+  - gearmand
+
+notifications:
+  email:
+    recipients:
+      - vaclav.sykora@gmail.com
+    on_success: change
+    on_failure: change
