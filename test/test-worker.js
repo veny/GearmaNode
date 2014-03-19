@@ -103,7 +103,7 @@ describe('Worker', function() {
 
     describe('#removeFunction', function() {
         it('should unset many managing values', function() {
-           w.addFunction('reverse', function() {});
+            w.addFunction('reverse', function() {});
             w.removeFunction('reverse');
             Object.keys(w.functions).length.should.equal(0);
             should.not.exist(w.functions.reverse);
@@ -130,6 +130,33 @@ describe('Worker', function() {
         it('should send packet to job server', function() {
             w.resetAbilities();
             w.jobServers[0].send.calledOnce.should.be.true;
+        })
+    })
+
+
+    describe('#setWorkerId', function() {
+        it('should return error when invalid workerId', function() {
+            w.setWorkerId().should.be.an.instanceof(Error);
+            w.setWorkerId(null).should.be.an.instanceof(Error);
+            w.setWorkerId('').should.be.an.instanceof(Error);
+            should.not.exist(w.setWorkerId('id')); // returns 'null' if validation ok
+        })
+        it('should set workerId option on worker', function() {
+            should.not.exist(w.workerId);
+            w.setWorkerId('id');
+            w.workerId.should.equal('id');
+        })
+        it('should invoke `send` on job server', function() {
+            w.setWorkerId('id');
+            w.jobServers[0].send.calledOnce.should.be.true;
+        })
+        it('should send corresponding packet to job server', function(done) {
+              w.jobServers[0].send = function(buff) {
+                var packetType = buff.readUInt32BE(4);
+                packetType.should.equal(protocol.PACKET_TYPES.SET_CLIENT_ID);
+                done();
+            }
+            w.setWorkerId('id');
         })
     })
 
