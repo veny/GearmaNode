@@ -13,7 +13,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 ## Features
 * fully implemented Gearman Protocol
- * @TODO (SET_CLIENT_ID, GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
+ * @TODO (GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
@@ -75,6 +75,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
  * [Client events](#client-events)
 * [Worker](#worker)
  * [Register function](#register-function)
+ * [Set Worker ID](#set-worker-id)
  * [Worker events](#worker-events)
 * [Job](#job)
  * [Job events](#job-events)
@@ -202,6 +203,14 @@ It tries to connect to ALL job servers and fires `error` if one registration fai
 A registered function can be unregistered via `worker#removeFunction`.
 Call `Worker#resetAbilities` to notify the server(s) that the worker is no longer able to do any functions it previously registered.
 
+#### Set Worker ID
+
+This method sets the worker ID in all job servers so monitoring and reporting commands can uniquely identify the various workers.
+Parameter `workerId` has to be a non-blank string with no whitespaces.
+
+```javascript
+worker.setWorkerId('FooBazBar');
+```
 
 #### Worker events
 * **socketConnect** - when a job server connected (physical connection is lazy opened by first data sending), has parameter **job server UID**
