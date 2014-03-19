@@ -88,6 +88,15 @@ describe('JobServer', function() {
                 done();
             })
         })
+        it('BF9: should connect once if two `send` invoked on unconnected server', function() {
+            var w = gearmanode.worker();
+            sinon.spy(w.jobServers[0], 'send'); // proxies original method
+            sinon.spy(w.jobServers[0], 'connect');
+            w.setWorkerId('foo');
+            w.setWorkerId('bar');
+            w.jobServers[0].send.calledTwice.should.be.true;
+            w.jobServers[0].connect.calledOnce.should.be.true;
+        })
     })
 
 
@@ -160,11 +169,11 @@ describe('JobServer', function() {
             js.setOption('foo');
         })
         it('should emit server error on client/worker if option is unknown', function(done) {
-            js.emit = sinon.spy();
+            sinon.spy(js, 'emit'); // proxies original method
             c.once('jobServerError', function(uid, code, msg) {
                 uid.should.equal(js.getUid());
                 code.toUpperCase().should.equal(protocol.CONSTANTS.UNKNOWN_OPTION);
-                js.emit.callCount.should.equal(0); // emit on Job Server after emit on Client/Worker
+                js.emit.callCount.should.equal(1); // internal event to signal successful connection
                 done();
             });
             js.setOption('foo');
