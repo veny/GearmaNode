@@ -1,6 +1,6 @@
 {
   "name": "gearmanode",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Node.js library for the Gearman distributed job system with support for multiple servers",
   "keywords": ["gearman", "distributed", "message queue", "job", "worker"],
   "author": "Vaclav Sykora <vaclav.sykora@gmail.com>",
