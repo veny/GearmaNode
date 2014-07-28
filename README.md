@@ -230,6 +230,7 @@ The `job` has following getters
 
 * **name** - name of the function, [Client/Worker]
 * **payload** - transmited/received data (Buffer or String) [Client/Worker]
+* **response** - data that is returned to the client as a response if job is done by a worker [Client]
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
 * **encoding** - encoding to use [Client]
