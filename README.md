@@ -247,19 +247,20 @@ and methods
 * **sendData** - send data before job completes [Worker]
 
 #### Job events
-* **submited** - when job submited via a job server; server UID stored on the job [Client]
-* **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned [Client]
+* **submited** - when job submited via a job server; server UID stored on the job; has no parameter [Client]
+* **created** - when response to one of the SUBMIT_JOB* packets arrived and job handle assigned; has no parameter [Client]
 * **status** - to update status information of a submitted jobs [Client]
  * in response to a client's request for a **background** job
  * status update propagated from worker to client in case of a **non-background** job
-* **workData** - to update the client with partial data from a running job [Client]
-* **warning** - to update the client with a warning [Client]
-* **complete** - when the non-background job completed successfully [Client]
-* **failed** - when a job has been canceled by invoking Job#reportError on worker side [Client]
+ * has parameter **status** with attributes: known, running, percent_done_num, percent_done_den (see protocol specification for more info)
+* **workData** - to update the client with partial data from a running job, has parameter **data** [Client]
+* **warning** - to update the client with a warning, has parameter **data** [Client]
+* **complete** - when the non-background job completed successfully, has no parameter [Client]
+* **failed** - when a job has been canceled by invoking Job#reportError on worker side, has no parameter [Client]
 * **exception** - when the job failed with the an exception, has parameter **text of exception** [Client]
-* **timeout** - when the job has been canceled due to timeout [Client/Worker]
-* **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker [Client/Worker]
-* **error** - when communication with job server failed [Client/Worker]
+* **timeout** - when the job has been canceled due to timeout, has no parameter [Client/Worker]
+* **close** - when Job#close() called or when the job forcible closed by shutdown of client or worker, has no parameter [Client/Worker]
+* **error** - when communication with job server failed, has parameter **Error** object [Client/Worker]
 
 
 ### Job server
