@@ -83,7 +83,6 @@ describe('Client', function() {
             c.submitJob('reverse').should.be.an.instanceof(Error);
         })
         it('should emit `submited` if job sent to server', function(done) {
-            js = c.jobServers[0];
             var job = c.submitJob('reverse', 'hi');
             js.jobsWaiting4Created.length.should.equal(0);
             job.once('submited', function() {
@@ -101,6 +100,17 @@ describe('Client', function() {
                 err.should.be.an.instanceof(Error);
                 done();
             })
+        })
+        it('should emit `submited` when job server already connected (BF #17)', function(done) {
+            js.connect(function() {
+                var job = c.submitJob('reverse', 'hi');
+                job.once('submited', function() {
+                    job.jobServerUid.should.equal(js.getUid());
+                    job.processing.should.be.true;
+                    done();
+                });
+            });
+
         })
     })
 
