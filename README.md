@@ -8,6 +8,7 @@
 Node.js library for the [Gearman](http://gearman.org/) distributed job system with support for multiple servers.
 
 
+[![npm version](https://badge.fury.io/js/gearmanode.svg)](http://badge.fury.io/js/gearmanode)
 [![Build Status](https://secure.travis-ci.org/veny/GearmaNode.png)](http://travis-ci.org/veny/GearmaNode)
 
 
