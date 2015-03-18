@@ -136,7 +136,7 @@ var job = client.submitJob('reverse', 'hello world!');
 var job = client.submitJob('reverse', 'hello world!', {background: true});
 
 // full configured job
-var job = client.submitJob('reverse', 'hello world!', {background: false, priority: 'HIGH', encoding: 'utf8', unique: 'FooBazBar'});
+var job = client.submitJob('reverse', 'hello world!', {background: false, priority: 'HIGH', unique: 'FooBazBar'});
 ```
 
 Client-side processing of job is managed via emitted events. See [Job events](#job-events) for more info.
@@ -234,7 +234,7 @@ The `job` has following getters
 * **response** - data that is returned to the client as a response if job is done by a worker [Client]
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
-* **encoding** - encoding to use [Client]
+* **encoding** - encoding to use [Client] DEPRECATED: will be removed in next release, use Buffer with corresponding string encoding as payload
 
 and methods
 
