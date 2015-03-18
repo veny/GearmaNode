@@ -182,7 +182,7 @@ describe('JobServer', function() {
 
 
     describe('#send', function() {
-        var hiPacket = protocol.encodePacket(protocol.PACKET_TYPES.ECHO_REQ, 'ascii', ['hi']);
+        var hiPacket = protocol.encodePacket(protocol.PACKET_TYPES.ECHO_REQ, ['hi']);
         it('should autoconnect when not connected before', function() {
             js.connect = sinon.spy();
             js.send(hiPacket);
