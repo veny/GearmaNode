@@ -125,7 +125,7 @@ and `options` are additional options as follows:
 
 * **background** {boolean} flag whether the job should be processed in background/asynchronous
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
-* **encoding** - {string} encoding if string data used
+* **encoding** - {string} encoding if string data used, **DEPRECATED**: will be removed in next release, use Buffer with corresponding string encoding as payload
 * **unique** {string} unique identifiter for the job @TODO
 
 ```javascript
@@ -234,7 +234,7 @@ The `job` has following getters
 * **response** - data that is returned to the client as a response if job is done by a worker [Client]
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
-* **encoding** - encoding to use [Client] DEPRECATED: will be removed in next release, use Buffer with corresponding string encoding as payload
+* **encoding** - encoding to use [Client] **DEPRECATED**: will be removed in next release, use Buffer with corresponding string encoding as payload
 
 and methods
 
