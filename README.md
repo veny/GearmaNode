@@ -143,7 +143,7 @@ var job = client.submitJob('reverse', 'hello world!');
 var job = client.submitJob('reverse', 'hello world!', {background: true});
 
 // full configured job
-var job = client.submitJob('reverse', 'hello world!', {background: false, priority: 'HIGH', unique: 'FooBazBar'});
+var job = client.submitJob('reverse', 'hello world!', {background: false, priority: 'HIGH', unique: 'FooBazBar', toStringEncoding: 'ascii'});
 ```
 
 Client-side processing of job is managed via emitted events. See [Job events](#job-events) for more info.
@@ -205,6 +205,14 @@ worker.addFunction('reverse', function (job) {
     var rslt = job.payload.toString().split("").reverse().join("");
     job.workComplete(rslt);
 });
+
+// or with Timeout and conversion to String
+
+worker.addFunction('reverse', function (job) {
+    var rslt = job.payload.toString().split("").reverse().join("");
+    job.workComplete(rslt);
+}, {timeout: 10, toStringEncoding: 'ascii'});
+
 ```
 It tries to connect to ALL job servers and fires `error` if one registration fails.
 
