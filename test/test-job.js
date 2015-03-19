@@ -62,6 +62,8 @@ describe('Job', function() {
             job.should.be.an.instanceof(Error);
             job = new Job(c, { name: 'foo', payload: 'bar', encoding: 'baz' });
             job.should.be.an.instanceof(Error);
+            job = new Job(c, { name: 'foo', payload: 'bar', toStringEncoding: 'baz' });
+            job.should.be.an.instanceof(Error);
         })
     })
 
