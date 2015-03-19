@@ -25,10 +25,11 @@ describe('Job', function() {
             j.encoding.should.equal('utf8');
             should.exist(j.uuid);
             should.not.exist(j.jobServer);
+            should.not.exist(j.toStringEncoding);
         })
-        it('should return special instance of Job', function() {
+        it('should store additional options', function() {
             var job = new Job(c,
-                { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH', encoding: 'ascii' }
+                { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH', toStringEncoding: 'ascii', encoding: 'ascii' }
             );
             job.should.be.an.instanceof(Job);
             job.name.should.equal('reverse');
@@ -36,6 +37,7 @@ describe('Job', function() {
             job.background.should.be.true;
             job.priority.should.equal('HIGH');
             job.encoding.should.equal('ascii');
+            job.toStringEncoding.should.equal('ascii');
         })
         it('should return error when missing mandatory options', function() {
             var job = new Job();

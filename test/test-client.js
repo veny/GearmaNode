@@ -35,6 +35,9 @@ describe('Client', function() {
             // recoverTime not number
             c = gearmanode.client({ recoverTime: '10' });
             c.should.be.an.instanceof(Error);
+            // unknown 'toStringEncoding'
+            c = gearmanode.client({ toStringEncoding: 'NonSence' });
+            c.should.be.an.instanceof(Error);
         })
         it('should set correct load balancer', function() {
             should.exist(c.loadBalancer);

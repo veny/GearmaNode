@@ -11,6 +11,9 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 [![npm version](https://badge.fury.io/js/gearmanode.svg)](http://badge.fury.io/js/gearmanode)
 [![Build Status](https://secure.travis-ci.org/veny/GearmaNode.png)](http://travis-ci.org/veny/GearmaNode)
 
+### Breaking API change
+* in v0.2.0
+ * `job.response` in `complete` event on job is `Buffer` now unless you provide `toStringEncoding` option in `submitJob`
 
 ## Features
 * fully implemented Gearman Protocol
@@ -18,7 +21,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
-* support for miscellaneous string encoding supported by Node.js `Buffer` class
+* support for binary data and miscellaneous string encoding
 * careful API documentation
 * rock solid tests
  * currently more than 100 test scenarios and 350 asserts
@@ -125,7 +128,7 @@ and `options` are additional options as follows:
 
 * **background** {boolean} flag whether the job should be processed in background/asynchronous
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
-* **encoding** - {string} encoding if string data used, **DEPRECATED**: will be removed in next release, use Buffer with corresponding string encoding as payload
+* **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
 * **unique** {string} unique identifiter for the job @TODO
 
 ```javascript
@@ -234,7 +237,7 @@ The `job` has following getters
 * **response** - data that is returned to the client as a response if job is done by a worker [Client]
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
-* **encoding** - encoding to use [Client] **DEPRECATED**: will be removed in next release, use Buffer with corresponding string encoding as payload
+* **encoding** - encoding to use [Client] **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
 
 and methods
 
