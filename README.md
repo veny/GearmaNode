@@ -13,7 +13,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 #### Breaking API change
 * in v0.2.0
- * payload given back to client as `job.response` in `complete`, `workData`, `warning`, `exception` events: is instance of `Buffer` now unless you provide `toStringEncoding` option in `submitJob`
+ * payload given back to client as `job.response` in `complete`, `workData`, `warning` and `exception` events: is instance of `Buffer` now, unless you provide `toStringEncoding` option in `submitJob`
 
 ## Features
 * fully implemented Gearman Protocol
