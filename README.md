@@ -13,7 +13,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 ### Breaking API change
 * in v0.2.0
- * payload given back to client as `job.response` in `complete` event: is `Buffer` now unless you provide `toStringEncoding` option in `submitJob`
+ * payload given back to client as `job.response` in `complete` event: is instance of `Buffer` now unless you provide `toStringEncoding` option in `submitJob`
  * WORK_DATA
  * WORK_WARNING
  * WORK_EXCEPTION
@@ -133,6 +133,7 @@ and `options` are additional options as follows:
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
 * **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
 * **unique** {string} unique identifiter for the job @TODO
+* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 ```javascript
 // by default foreground job with normal priority
@@ -191,7 +192,7 @@ where `name` is a symbolic name of the function, `callback` is a function to be 
 and `options` are additional options as follows:
 
 * **timeout** {number} timeout value in seconds on how long the job is allowed to run, thereafter the job server will mark the job as failed and notify any listening clients
-* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer` @TODO
+* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 The worker function `callback` gets parameter [Job](#job) which is:
 
