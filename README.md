@@ -11,7 +11,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 [![npm version](https://badge.fury.io/js/gearmanode.svg)](http://badge.fury.io/js/gearmanode)
 [![Build Status](https://secure.travis-ci.org/veny/GearmaNode.png)](http://travis-ci.org/veny/GearmaNode)
 
-### Breaking API change
+#### Breaking API change
 * in v0.2.0
  * payload given back to client as `job.response` in `complete` event: is instance of `Buffer` now unless you provide `toStringEncoding` option in `submitJob`
  * WORK_DATA
@@ -133,7 +133,7 @@ and `options` are additional options as follows:
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
 * **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
 * **unique** {string} unique identifiter for the job @TODO
-* **toStringEncoding** {string} if given received payload will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
+* **toStringEncoding** {string} if given received response will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 ```javascript
 // by default foreground job with normal priority
