@@ -77,4 +77,48 @@ describe('Worker', function() {
         })
     })
 
+
+    describe('#submitJob#workData', function() {
+        it('should return expected data', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.sendWorkData('456');
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('workData', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+    })
+    describe('#submitJob#workData', function() {
+        it('should return expected data sent as Buffer', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.sendWorkData(new Buffer([52, 53, 54]));
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('workData', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+    })
+    describe('#submitJob#workData', function() {
+        it('should return expected data received as String', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.sendWorkData(new Buffer([52, 53, 54]));
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123', {toStringEncoding: 'ascii'});
+            job.on('workData', function(data) {
+                data.should.be.an.instanceof(String);
+                data.should.equal('456');
+                done();
+            });
+        })
+    })
+
 })
