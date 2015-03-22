@@ -91,8 +91,6 @@ describe('Worker', function() {
                 done();
             });
         })
-    })
-    describe('#submitJob#workData', function() {
         it('should return expected data sent as Buffer', function(done) {
             w.addFunction('dummy', function (job) {
                 job.sendWorkData(new Buffer([52, 53, 54]));
@@ -105,8 +103,6 @@ describe('Worker', function() {
                 done();
             });
         })
-    })
-    describe('#submitJob#workData', function() {
         it('should return expected data received as String', function(done) {
             w.addFunction('dummy', function (job) {
                 job.sendWorkData(new Buffer([52, 53, 54]));
