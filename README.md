@@ -323,7 +323,6 @@ worker.addFunction('reverse', function (job) {
 
 // send binary data
 client.submitJob('reverse', new Buffer([49, 50, 51]));
-
 ```
 
 
