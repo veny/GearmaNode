@@ -8,7 +8,7 @@ var should     = require('should'),
     JobServer  = require('../lib/gearmanode/job-server').JobServer;
 
 
-describe('Worker', function() {
+describe('Client/Worker', function() {
     var w, c;
 
     beforeEach(function() {
@@ -36,6 +36,19 @@ describe('Worker', function() {
                 done();
             });
         })
+        it('should return expected data sent as binary', function(done) {
+            w.addFunction('reverse', function (job) {
+                job.payload.should.be.an.instanceof(Buffer);
+                job.payload.toString().should.equal('123');
+                job.workComplete(job.payload.toString().split("").reverse().join(""))
+            });
+            var job = c.submitJob('reverse', new Buffer([49, 50, 51]));
+            job.on('complete', function() {
+                job.response.should.be.an.instanceof(Buffer);
+                job.response.toString().should.equal('321');
+                done();
+            });
+        })
         it('should return expected data with diacritic', function(done) {
             w.addFunction('reverse', function (job) {
                 job.payload.should.be.an.instanceof(Buffer);
@@ -55,7 +68,7 @@ describe('Worker', function() {
                 job.payload.should.equal('123');
                 job.workComplete(job.payload.toString().split("").reverse().join(""))
             }, {toStringEncoding: 'ascii'});
-            var job = c.submitJob('reverse', '123', {toStringEncoding: 'ascii'});
+            var job = c.submitJob('reverse', Buffer('123', 'ascii'), {toStringEncoding: 'ascii'});
             job.on('complete', function() {
                 job.response.should.be.an.instanceof(String);
                 job.response.should.equal('321');
@@ -66,7 +79,7 @@ describe('Worker', function() {
             w.addFunction('reverse', function (job) {
                 job.payload.should.be.an.instanceof(String);
                 job.payload.should.equal('123');
-                job.workComplete(job.payload.toString().split("").reverse().join(""))
+                job.workComplete(job.payload.split("").reverse().join(""))
             }, {toStringEncoding: 'ascii'});
             var job = c.submitJob('reverse', new Buffer([49, 50, 51])); // '123'
             job.on('complete', function() {
@@ -110,6 +123,86 @@ describe('Worker', function() {
             });
             var job = c.submitJob('dummy', '123', {toStringEncoding: 'ascii'});
             job.on('workData', function(data) {
+                data.should.be.an.instanceof(String);
+                data.should.equal('456');
+                done();
+            });
+        })
+    })
+
+
+    describe('#submitJob#warning', function() {
+        it('should return expected data', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.reportWarning('456');
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('warning', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+        it('should return expected data sent as Buffer', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.reportWarning(new Buffer([52, 53, 54]));
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('warning', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+        it('should return expected data received as String', function(done) {
+            w.addFunction('dummy', function (job) {
+                job.reportWarning(new Buffer([52, 53, 54]));
+                job.workComplete()
+            });
+            var job = c.submitJob('dummy', '123', {toStringEncoding: 'ascii'});
+            job.on('warning', function(data) {
+                data.should.be.an.instanceof(String);
+                data.should.equal('456');
+                done();
+            });
+        })
+    })
+
+
+    describe('#submitJob#exception', function() {
+        it('should return expected data', function(done) {
+            c.jobServers[0].setOption('exceptions', function(){});
+            w.addFunction('dummy', function (job) {
+                job.reportException(new Buffer([52, 53, 54]));
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('exception', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+        it('should return expected data sent as Buffer', function(done) {
+            c.jobServers[0].setOption('exceptions', function(){});
+            w.addFunction('dummy', function (job) {
+                job.reportException(new Buffer([52, 53, 54]));
+            });
+            var job = c.submitJob('dummy', '123');
+            job.on('exception', function(data) {
+                data.should.be.an.instanceof(Buffer);
+                data.toString().should.equal('456');
+                done();
+            });
+        })
+        it('should return expected data received as String', function(done) {
+            c.jobServers[0].setOption('exceptions', function(){});
+            w.addFunction('dummy', function (job) {
+                job.reportException(new Buffer([52, 53, 54]));
+            });
+            var job = c.submitJob('dummy', '123', {toStringEncoding: 'ascii'});
+            job.on('exception', function(data) {
                 data.should.be.an.instanceof(String);
                 data.should.equal('456');
                 done();

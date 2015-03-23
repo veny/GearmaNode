@@ -24,7 +24,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 * support for binary data and miscellaneous string encoding
 * careful API documentation
 * rock solid tests
- * currently more than 100 test scenarios and 350 asserts
+ * currently more than 120 test scenarios and 400 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
@@ -85,6 +85,7 @@ See [example](https://github.com/veny/GearmaNode/tree/master/example) folder for
  * [Job events](#job-events)
 * [Job server](#job-server)
  * [Job server events](#job-server-events)
+* [Binary data](#binary-data)
 * [Multiple servers](#multiple-servers)
 * [Error handling](#error-handling)
 * [Configuration](#configuration)
@@ -299,6 +300,31 @@ js.echo('ping')
 * **echo** - when response to ECHO_REQ packet arrived, has parameter **data** which is opaque data echoed back in response
 * **option** - issued when an option for the connection in the job server was successfully set, has parameter **name** of the option that was set
 * **jobServerError** - whenever the job server encounters an error, has parameters **code**, **message**
+
+
+### Binary data
+Both binary data and text with various encoding are supported. By default the data delivered to client and worker are `Buffer` objects.
+You can change this approach by providing `toStringEncoding` option in `Client#submitJob` or 'Worker#addFunction'.
+See following snippets of code or [test-all-stack.js](https://github.com/veny/GearmaNode/blob/master/test/test-all-stack.js) for more inspiration.
+
+```
+// send text with default encoding; Job#response will be a Buffer object
+client.submitJob('reverse', '123');
+
+// send text with given encoding; Job#response will be a Buffer object
+client.submitJob('reverse', Buffer('123', 'ascii').toString());
+
+// send text with given encoding; Job#response will be a String object with ASCII encoding
+client.submitJob('reverse', '123', {toStringEncoding: 'ascii'});
+// and receive text on Worker; Job#payload will be a String object with ASCII encoding
+worker.addFunction('reverse', function (job) {
+    job.workComplete(job.payload.split("").reverse().join(""))
+}, {toStringEncoding: 'ascii'});
+
+// send binary data
+client.submitJob('reverse', new Buffer([49, 50, 51]));
+
+```
 
 
 ### Multiple servers
