@@ -1,5 +1,7 @@
 var gearmanode = require('gearmanode');
 
+gearmanode.Client.logger.transports.console.level = 'error';
+
 // hammer the server with repeated jobs with gearmanode as client
 var client = gearmanode.client();
 setInterval(function() {

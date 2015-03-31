@@ -9,5 +9,6 @@ worker.addFunction('wtf', function (job) {
     var response = {
         'cnt': ++cnt
     }
+    console.log("counter: " + cnt);
     job.workComplete(JSON.stringify(response));
 });
