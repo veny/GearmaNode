@@ -258,7 +258,6 @@ and methods
 * **reportWarning** - sends a warning explicitly to the job server [Worker]
 * **reportError** - to indicate that the job failed [Worker]
 * **reportException** - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
-* **sendData** - send data before job completes [Worker]
 
 #### Job events
 * **submited** - when job submited via a job server; server UID stored on the job; has no parameter [Client]
@@ -359,6 +358,16 @@ This happens mostly by network communication failure or if a gearman service fai
 
 #### Logger
 `Winston` library is used for logging. See the [project page](https://github.com/flatiron/winston) for details.
+
+The `GearmaNode` library registers following loggers:
+
+* Client
+* Worker
+* JobServer
+* Job
+* LBStrategy
+* protocol
+
 You can configure the logger in this way:
 
 ```javascript
