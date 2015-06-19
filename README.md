@@ -16,7 +16,7 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
  * payload given back to client as `job.response` in `complete`, `workData`, `warning` and `exception` events: is instance of `Buffer` now, unless you provide `toStringEncoding` option in `submitJob`
 
 ## Features
-* fully implemented Gearman Protocol
+* fully implemented [Gearman Protocol](http://gearman.org/protocol/)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
