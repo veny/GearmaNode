@@ -210,4 +210,37 @@ describe('Client/Worker', function() {
         })
     })
 
+
+    describe('#submitJob#unique', function() {
+        it('should propagate unique to worker', function(done) {
+            w = gearmanode.worker({withUnique: true});
+            w.addFunction('reverse', function (job) {
+                job.unique.should.be.an.instanceof(String);
+                job.unique.should.equal('foo');
+                job.workComplete('ok');
+                done();
+            });
+            var job = c.submitJob('reverse', 'alfa', {unique: 'foo'});
+        })
+        it('should propagate empty unique if not provided by client', function(done) {
+            w = gearmanode.worker({withUnique: true});
+            w.addFunction('reverse', function (job) {
+                job.unique.should.be.an.instanceof(String);
+                job.unique.should.equal('');
+                job.workComplete('ok');
+                done();
+            });
+            var job = c.submitJob('reverse', 'alfa');
+        })
+        it('should NOT propagate unique to worker', function(done) { // worker with {withUnique: false} by default
+            w.addFunction('reverse', function (job) {
+                should.not.exist(job.unique);
+                job.workComplete('ok');
+                done();
+            });
+            var job = c.submitJob('reverse', 'alfa', {unique: 'foo'});
+        })
+    })
+
+
 })

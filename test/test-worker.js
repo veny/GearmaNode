@@ -23,10 +23,15 @@ describe('Worker', function() {
     describe('#factory', function() {
         it('should return default instance of Worker', function() {
             w.should.be.an.instanceof(Worker);
+            w.withUnique.should.be.false;
             w._type.should.equal('Worker');
             should.exist(w.jobServers);
             should.exist(w.functions);
             Object.keys(w.functions).length.should.equal(0);
+        })
+        it('should store additional options', function() {
+            w = gearmanode.worker({ withUnique: true });
+            w.withUnique.should.be.true;
         })
     })
 
@@ -64,10 +69,9 @@ describe('Worker', function() {
             w._preSleep.calledOnce.should.be.true;
         })
         it('should store additional options', function() {
-            w.addFunction('reverse', function() {}, {timeout: 10, withUnique: true, toStringEncoding: 'ascii'});
-            Object.keys(w.functions.reverse[1]).length.should.equal(3);
+            w.addFunction('reverse', function() {}, {timeout: 10, toStringEncoding: 'ascii'});
+            Object.keys(w.functions.reverse[1]).length.should.equal(2);
             w.functions.reverse[1].timeout.should.equal(10);
-            w.functions.reverse[1].withUnique.should.be.true;
             w.functions.reverse[1].toStringEncoding.should.equal('ascii');
         })
         it('should return error when invalid function name', function() {
@@ -160,9 +164,28 @@ describe('Worker', function() {
         })
     })
 
+    describe('#_response', function() {
+        it('should send GRAB_JOB when NOOP received', function(done) {
+            w.jobServers[0].send = function(buff) {
+                var packetType = buff.readUInt32BE(4);
+                packetType.should.equal(protocol.PACKET_TYPES.GRAB_JOB);
+                done();
+            }
+            w._response(w.jobServers[0], protocol.PACKET_TYPES.NOOP);
+        })
+        it('should send GRAB_JOB_UNIQ when NOOP received', function(done) {
+            w.withUnique = true;
+            w.jobServers[0].send = function(buff) {
+                var packetType = buff.readUInt32BE(4);
+                packetType.should.equal(protocol.PACKET_TYPES.GRAB_JOB_UNIQ);
+                done();
+            }
+            w._response(w.jobServers[0], protocol.PACKET_TYPES.NOOP);
+        })
+    })
+
 
     describe('#Job', function() {
-
 
         describe('#workComplete', function() {
             it('should send packets to job server', function() {
