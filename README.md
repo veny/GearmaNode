@@ -17,14 +17,13 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
 
 ## Features
 * fully implemented Gearman Protocol
- * @TODO (GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
 * support for binary data and miscellaneous string encoding
 * careful API documentation
 * rock solid tests
- * currently more than 120 test scenarios and 400 asserts
+ * currently more than 130 test scenarios and 400 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
@@ -130,7 +129,7 @@ and `options` are additional options as follows:
 * **background** {boolean} flag whether the job should be processed in background/asynchronous
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
 * **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
-* **unique** {string} unique identifiter for the job @TODO
+* **unique** {string} unique identifiter for the job
 * **toStringEncoding** {string} if given received response will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 ```javascript
@@ -181,7 +180,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **host** [see Client](#client)
  * **port** [see Client](#client)
  * **servers** [see Client](#client)
- * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID @TODO
+ * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID
 
 #### Register function
 
@@ -248,6 +247,7 @@ The `job` has following getters
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
 * **encoding** - encoding to use [Client] **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
+* **unique** - unique identifier assigned by client [Worker]
 
 and methods
 
