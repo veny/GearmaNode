@@ -306,7 +306,7 @@ Both binary data and text with various encoding are supported. By default the da
 You can change this approach by providing `toStringEncoding` option in `Client#submitJob` or `Worker#addFunction`.
 See following snippets of code or [test-all-stack.js](https://github.com/veny/GearmaNode/blob/master/test/test-all-stack.js) for more inspiration.
 
-```
+```javascript
 // send text with default encoding; Job#response will be a Buffer object
 client.submitJob('reverse', '123');
 
