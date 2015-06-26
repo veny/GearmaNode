@@ -26,6 +26,8 @@ describe('JobServer', function() {
             should.not.exist(js.clientOrWorker);
             js.jobsWaiting4Created.length.should.equal(0);
             js.getUid().should.equal('localhost:4730');
+            should.exist(js.wrongDisconnectAt);
+            js.wrongDisconnectAt.should.be.equal(0);
         })
         it('should return error when missing mandatory options', function() {
             js = new JobServer();
@@ -42,6 +44,7 @@ describe('JobServer', function() {
         it('should change inner state when connection OK', function(done) {
             js.connect(function(err) {
                 js.connected.should.be.true;
+                js.wrongDisconnectAt.should.be.equal(0);
                 should.exist(js.socket);
                 js.socket.should.be.an.instanceof(net.Socket);
                 done();
@@ -75,6 +78,7 @@ describe('JobServer', function() {
                 err.should.be.an.instanceof(Error);
                 err.code.should.be.equal('ECONNREFUSED');
                 js.connected.should.be.false;
+                js.wrongDisconnectAt.should.be.greaterThan(0);
                 should.not.exist(js.socket);
                 done();
             })
@@ -108,9 +112,18 @@ describe('JobServer', function() {
                 js.socket.listeners('connect').length.should.equal(2); // one is mine, the other from some infrastructure
                 js.disconnect();
                 js.connected.should.be.false;
+                js.wrongDisconnectAt.should.be.equal(0);
                 should.not.exist(js.socket);
                 should.exist(js.clientOrWorker);
                 js.jobsWaiting4Created.length.should.equal(0);
+                done();
+            })
+        })
+        it('should set `wrongDisconnectAt` when disconnect caused by a problem', function(done) {
+            var socket = js.connect(function(err, jobServer) {
+                should.not.exist(err);
+                js.disconnect(true); // true => simulate an error object
+                js.wrongDisconnectAt.should.be.greaterThan(0);
                 done();
             })
         })
