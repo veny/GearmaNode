@@ -18,6 +18,12 @@ describe('load-balancing', function() {
 
 
         describe('#constructor', function() {
+            it('should return default instance of Sequence', function() {
+                lb.should.be.an.instanceof(Sequence);
+                lb.nodeCount.should.equal(2);
+                Object.keys(lb.badNodes).length.should.equal(0);
+                lb.recoverTime.should.equal(30000);
+            })
             it('should return error when violated validation', function() {
                 // duplicate servers
                 lb = new Sequence();
