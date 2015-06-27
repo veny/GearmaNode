@@ -24,14 +24,18 @@ describe('Worker', function() {
         it('should return default instance of Worker', function() {
             w.should.be.an.instanceof(Worker);
             w.withUnique.should.be.false;
+            w.recoverTime.should.equal(30000);
+            w.recoverLimit.should.equal(3);
             w._type.should.equal('Worker');
             should.exist(w.jobServers);
             should.exist(w.functions);
             Object.keys(w.functions).length.should.equal(0);
         })
         it('should store additional options', function() {
-            w = gearmanode.worker({ withUnique: true });
+            w = gearmanode.worker({ withUnique: true, recoverTime: 1, recoverLimit: 1 });
             w.withUnique.should.be.true;
+            w.recoverTime.should.equal(1);
+            w.recoverLimit.should.equal(1);
         })
     })
 
