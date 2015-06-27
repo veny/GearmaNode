@@ -26,8 +26,8 @@ describe('JobServer', function() {
             should.not.exist(js.clientOrWorker);
             js.jobsWaiting4Created.length.should.equal(0);
             js.getUid().should.equal('localhost:4730');
-            should.exist(js.wrongDisconnectAt);
             js.wrongDisconnectAt.should.be.equal(0);
+            js.failedConnectionCount.should.be.equal(0);
         })
         it('should return error when missing mandatory options', function() {
             js = new JobServer();
@@ -45,6 +45,7 @@ describe('JobServer', function() {
             js.connect(function(err) {
                 js.connected.should.be.true;
                 js.wrongDisconnectAt.should.be.equal(0);
+                js.failedConnectionCount.should.be.equal(0);
                 should.exist(js.socket);
                 js.socket.should.be.an.instanceof(net.Socket);
                 done();
@@ -79,6 +80,7 @@ describe('JobServer', function() {
                 err.code.should.be.equal('ECONNREFUSED');
                 js.connected.should.be.false;
                 js.wrongDisconnectAt.should.be.greaterThan(0);
+                js.failedConnectionCount.should.be.greaterThan(0);
                 should.not.exist(js.socket);
                 done();
             })
@@ -113,6 +115,7 @@ describe('JobServer', function() {
                 js.disconnect();
                 js.connected.should.be.false;
                 js.wrongDisconnectAt.should.be.equal(0);
+                js.failedConnectionCount.should.be.equal(0);
                 should.not.exist(js.socket);
                 should.exist(js.clientOrWorker);
                 js.jobsWaiting4Created.length.should.equal(0);
@@ -124,6 +127,7 @@ describe('JobServer', function() {
                 should.not.exist(err);
                 js.disconnect(true); // true => simulate an error object
                 js.wrongDisconnectAt.should.be.greaterThan(0);
+                js.failedConnectionCount.should.be.greaterThan(0);
                 done();
             })
         })
