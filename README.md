@@ -107,7 +107,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **port** {number} port of single job server
  * **servers** {array} array of host,port pairs of multiple job servers
  * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy
- * **recoverTime** {number} delay in miliseconds before retrying the downed job server
+ * **recoverTime** {number} delay in milliseconds before retrying the downed job server
 
 ```javascript
 // special port
