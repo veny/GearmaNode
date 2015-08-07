@@ -16,15 +16,14 @@ Node.js library for the [Gearman](http://gearman.org/) distributed job system wi
  * payload given back to client as `job.response` in `complete`, `workData`, `warning` and `exception` events: is instance of `Buffer` now, unless you provide `toStringEncoding` option in `submitJob`
 
 ## Features
-* fully implemented Gearman Protocol
- * @TODO (GRAB_JOB_UNIQ, JOB_ASSIGN_UNIQ)
+* fully implemented [Gearman Protocol](http://gearman.org/protocol/)
 * support for multiple job servers
  * load balancing strategy (`sequence` or `round-robin`)
  * recover time (when a server node is down due to maintenance or a crash, load balancer will use the recover-time as a delay before retrying the downed job server)
 * support for binary data and miscellaneous string encoding
 * careful API documentation
 * rock solid tests
- * currently more than 120 test scenarios and 400 asserts
+ * currently more than 130 test scenarios and 400 asserts
 * in depth tested with gearman clients and workers written in other languages (Ruby, PHP, Java)
 
 
@@ -108,7 +107,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **port** {number} port of single job server
  * **servers** {array} array of host,port pairs of multiple job servers
  * **loadBalancing** {'Sequence'|'RoundRobin'} name of load balancing strategy
- * **recoverTime** {number} delay in miliseconds before retrying the downed job server
+ * **recoverTime** {number} delay in milliseconds before retrying the downed job server
 
 ```javascript
 // special port
@@ -130,7 +129,7 @@ and `options` are additional options as follows:
 * **background** {boolean} flag whether the job should be processed in background/asynchronous
 * **priority** {'HIGH'|'NORMAL'|'LOW'} priority in job server queue
 * **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
-* **unique** {string} unique identifiter for the job @TODO
+* **unique** {string} unique identifiter for the job
 * **toStringEncoding** {string} if given received response will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
 
 ```javascript
@@ -181,7 +180,7 @@ By default, the job server is expected on `localhost:4730`. Following options ca
  * **host** [see Client](#client)
  * **port** [see Client](#client)
  * **servers** [see Client](#client)
- * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID @TODO
+ * **withUnique** {boolean} flag whether a job will be grabbed with the client assigned unique ID
 
 #### Register function
 
@@ -248,6 +247,7 @@ The `job` has following getters
 * **jobServerUid** - unique identification (UID) of the job server that transmited the job [Client/Worker]
 * **handle** - unique handle assigned by job server when job created [Client/Worker]
 * **encoding** - encoding to use [Client] **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
+* **unique** - unique identifier assigned by client [Worker]
 
 and methods
 
@@ -258,7 +258,6 @@ and methods
 * **reportWarning** - sends a warning explicitly to the job server [Worker]
 * **reportError** - to indicate that the job failed [Worker]
 * **reportException** - to indicate that the job failed with exception (deprecated, provided for backwards compatibility) [Worker]
-* **sendData** - send data before job completes [Worker]
 
 #### Job events
 * **submited** - when job submited via a job server; server UID stored on the job; has no parameter [Client]
@@ -307,7 +306,7 @@ Both binary data and text with various encoding are supported. By default the da
 You can change this approach by providing `toStringEncoding` option in `Client#submitJob` or `Worker#addFunction`.
 See following snippets of code or [test-all-stack.js](https://github.com/veny/GearmaNode/blob/master/test/test-all-stack.js) for more inspiration.
 
-```
+```javascript
 // send text with default encoding; Job#response will be a Buffer object
 client.submitJob('reverse', '123');
 
@@ -359,6 +358,16 @@ This happens mostly by network communication failure or if a gearman service fai
 
 #### Logger
 `Winston` library is used for logging. See the [project page](https://github.com/flatiron/winston) for details.
+
+The `GearmaNode` library registers following loggers:
+
+* Client
+* Worker
+* JobServer
+* Job
+* LBStrategy
+* protocol
+
 You can configure the logger in this way:
 
 ```javascript
