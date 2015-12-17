@@ -229,4 +229,33 @@ describe('JobServer', function() {
         })
     })
 
+
+    describe('#_processData', function() {
+        it('should process NOOP message correctly', function() {
+            var chunk = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // NOOP
+            js.clientOrWorker._response = sinon.spy();
+            js.connected = true;
+            js._processData(chunk);
+            should.not.exist(js.segmentedPacket);
+            should.not.exist(js.headerfrag);
+            js.clientOrWorker._response.calledOnce.should.be.true;
+            js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
+        })
+        it('PR 41: should concatenate message with header splitted into two', function() {
+            var chunk1 = new Buffer([0x00, 0x52, 0x45]);
+            var chunk2 = new Buffer([0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00,
+                                     0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // NOOP + one more NOPE
+            js.clientOrWorker._response = sinon.spy();
+            js.connected = true;
+            js._processData(chunk1);
+            should.not.exist(js.segmentedPacket);
+            should.exist(js.headerfrag);
+            js._processData(chunk2);
+            should.not.exist(js.segmentedPacket);
+            should.not.exist(js.headerfrag);
+            js.clientOrWorker._response.calledOnce.should.be.true;
+            js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
+        })
+    })
+
 })
