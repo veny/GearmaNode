@@ -241,10 +241,46 @@ describe('JobServer', function() {
             js.clientOrWorker._response.calledOnce.should.be.true;
             js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
         })
+        it('should process one packet with two messages correctly', function(done) {
+            var chunk1 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // NOOP
+            var chunk2 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00]); // NO_JOB
+            var chunk = Buffer.concat([chunk1, chunk2]);
+            var counter = 0;
+            js.clientOrWorker._response = sinon.spy();
+            js.connected = true;
+            js._processData(chunk);
+            // '_processData' works recursively in this case; the second call is via 'process.nextTick'
+            // so the asserts must be in the next tick
+            process.nextTick(function() {
+                should.not.exist(js.segmentedPacket);
+                should.not.exist(js.headerfrag);
+                js.clientOrWorker._response.calledTwice.should.be.true;
+                js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
+                js.clientOrWorker._response.getCall(1).args[1].should.equal(protocol.PACKET_TYPES.NO_JOB);
+                done();
+            })
+        })
+        // it('should process more packet with one messages correctly', function() {
+        //     var chunk1 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // JOB_ASSIGN
+        //     var chunk2 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00]); //
+        //     var chunk = Buffer.concat([chunk1, chunk2]);
+        //     var counter = 0;
+        //     js.clientOrWorker._response = sinon.spy();
+        //     js.connected = true;
+        //     js._processData(chunk);
+        //     // '_processData' works recursively in this case; the second call is via 'process.nextTick'
+        //     // so the asserts must be in the next tick
+        //     process.nextTick(function() {
+        //         should.not.exist(js.segmentedPacket);
+        //         should.not.exist(js.headerfrag);
+        //         js.clientOrWorker._response.calledTwice.should.be.true;
+        //         js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
+        //     })
+        // })
         it('PR 41: should concatenate message with header splitted into two', function() {
             var chunk1 = new Buffer([0x00, 0x52, 0x45]);
-            var chunk2 = new Buffer([0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00,
-                                     0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // NOOP + one more NOPE
+            var chunk2 = new Buffer([0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, // NOOP
+                                     0x00, 0x00, 0x00]); // + 3 bytes to be >= 12
             js.clientOrWorker._response = sinon.spy();
             js.connected = true;
             js._processData(chunk1);
@@ -252,7 +288,7 @@ describe('JobServer', function() {
             should.exist(js.headerfrag);
             js._processData(chunk2);
             should.not.exist(js.segmentedPacket);
-            should.not.exist(js.headerfrag);
+            should.exist(js.headerfrag); // because last 3 bytes are identified as splitted header again
             js.clientOrWorker._response.calledOnce.should.be.true;
             js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
         })
