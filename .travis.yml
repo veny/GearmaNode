@@ -3,16 +3,17 @@ node_js:
   - "0.12"
   - "0.10"
 
-# before_install:
-#   - "sudo apt-get install libboost-all-dev"
-#   - "sudo apt-get install gearman"
+before_install:
+  - "sudo apt-cache search gearman"
+  - "sudo apt-get install gearman"
+  - "sudo apt-get install libboost-all-dev"
 
-install:
-  - cat /proc/version
-  - uname -a
-  - cat /etc/issue
-  - curl -L https://launchpad.net/gearmand/1.2/1.1.12/+download/gearmand-1.1.12.tar.gz | tar zxv
-  - cd gearmand-1.1.12 && ./configure && make && sudo make install
+# install:
+#   - cat /proc/version
+#   - uname -a
+#   - cat /etc/issue
+#   - curl -L https://launchpad.net/gearmand/1.2/1.1.12/+download/gearmand-1.1.12.tar.gz | tar zxv
+#   - cd gearmand-1.1.12 && ./configure && make && sudo make install
 
 before_script:
   - /usr/local/sbin/gearmand --daemon
