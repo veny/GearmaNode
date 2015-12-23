@@ -4,7 +4,7 @@ node_js:
   - "0.10"
 
 before_install:
-  - "sudo apt-cache install libboost-iostreams"
+  - "sudo apt-get install libboost-iostreams"
   # - "sudo apt-get install gearman"
   # - "sudo apt-get install libboost-all-dev"
 
