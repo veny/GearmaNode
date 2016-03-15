@@ -239,7 +239,7 @@ describe('JobServer', function() {
             should.not.exist(js.segmentedPacket);
             js.clientOrWorker._response.calledOnce.should.be.true;
             js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
-        })
+        })        
         it('should process one packet with two messages correctly', function(done) {
             var chunk1 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00]); // NOOP
             var chunk2 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00]); // NO_JOB
@@ -271,6 +271,23 @@ describe('JobServer', function() {
             js.clientOrWorker._response.calledOnce.should.be.true;
             js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.JOB_ASSIGN);
         })
+        it('should process more packet(length less than the header length) with one messages correctly', function() {
+            var chunk1 = new Buffer([0x00, 0x52, 0x45, 0x53, 0x00, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x14]); // JOB_ASSIGN
+            var chunk2 = new Buffer([0x48, 0x3a, 0x6c, 0x61, 0x70, 0x3a, 0x31, 0x00, 0x72, 0x65, 0x76, 0x65, 0x72, 0x73, 0x65, 0x00]);
+            var chunk3 = new Buffer([0x74, 0x65, 0x73, 0x74]);
+            js.clientOrWorker._response = sinon.spy();
+            js.connected = true;
+            js._processData(chunk1);
+            should.exist(js.segmentedPacket);
+            js.clientOrWorker._response.called.should.be.false;
+            js._processData(chunk2);
+            should.exist(js.segmentedPacket);
+            js.clientOrWorker._response.called.should.be.false;
+            js._processData(chunk3);
+            should.not.exist(js.segmentedPacket);
+            js.clientOrWorker._response.calledOnce.should.be.true;
+            js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.JOB_ASSIGN);
+        })
         it('PR 41: should concatenate one message with header splitted into two packets', function() {
             var chunk1 = new Buffer([0x00, 0x52, 0x45]);
             var chunk2 = new Buffer([0x53, 0x00, 0x00, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, // NOOP
@@ -280,10 +297,10 @@ describe('JobServer', function() {
             js._processData(chunk1);
             should.exist(js.segmentedPacket);
             js._processData(chunk2);
-			process.nextTick(function() {
-				should.exist(js.segmentedPacket);
-				done();
-			});
+            process.nextTick(function() {
+                should.exist(js.segmentedPacket);
+                done();
+            });
             js.clientOrWorker._response.calledOnce.should.be.true;
             js.clientOrWorker._response.getCall(0).args[1].should.equal(protocol.PACKET_TYPES.NOOP);
         })
