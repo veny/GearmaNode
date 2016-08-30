@@ -10,9 +10,9 @@ node_js:
 before_install:
   # - "sudo add-apt-repository universe"
   # On older versions of Ubuntu, you might have to use a full source line:
-  - "sudo add-apt-repository 'deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe'"
+  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) universe"
 
-  - "sudo apt-get update"
+  - sudo apt-get update
 
   - "sudo apt-get install libboost-iostreams"
   # - "sudo apt-get install gearman"
