@@ -1,12 +1,18 @@
 language: node_js
 node_js:
+  - "6"
+  - "5"
+  - "4"
   - "0.12"
   - "0.10"
+  - "iojs"
 
 before_install:
-  - "sudo apt-get install libboost-iostreams"
-  # - "sudo apt-get install gearman"
-  # - "sudo apt-get install libboost-all-dev"
+  # Prepare repository for isntall "libboost".
+  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main universe restricted multiverse"
+  - sudo apt-get update
+
+  - sudo apt-get install libboost-all-dev gperf libevent-dev uuid-dev
 
 install:
   - cat /proc/version
