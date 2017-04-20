@@ -23,6 +23,7 @@ describe('Job', function() {
             j.background.should.be.false;
             j.priority.should.equal('NORMAL');
             j.encoding.should.equal('utf8');
+            should.not.exist(j.epochTime);
             should.not.exist(j.unique);
             should.exist(j.uuid);
             should.not.exist(j.jobServer);
@@ -30,7 +31,7 @@ describe('Job', function() {
         })
         it('should store additional options', function() {
             var job = new Job(c,
-                { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH', toStringEncoding: 'ascii', encoding: 'ascii', unique: 'foo' }
+                { name: 'reverse', payload: 'hi', background: true, priority: 'HIGH', toStringEncoding: 'ascii', encoding: 'ascii', unique: 'foo', epochTime: 1234 }
             );
             job.should.be.an.instanceof(Job);
             job.name.should.equal('reverse');
@@ -40,6 +41,7 @@ describe('Job', function() {
             job.encoding.should.equal('ascii');
             job.toStringEncoding.should.equal('ascii');
             job.unique.should.equal('foo');
+            job.epochTime.should.equal(1234);
         })
         it('should return error when missing mandatory options', function() {
             var job = new Job();
@@ -65,6 +67,8 @@ describe('Job', function() {
             job = new Job(c, { name: 'foo', payload: 'bar', encoding: 'baz' });
             job.should.be.an.instanceof(Error);
             job = new Job(c, { name: 'foo', payload: 'bar', toStringEncoding: 'baz' });
+            job.should.be.an.instanceof(Error);
+            job = new Job(c, { name: 'foo', payload: 'bar', epochTime: '1234' });
             job.should.be.an.instanceof(Error);
         })
     })

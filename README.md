@@ -131,6 +131,7 @@ and `options` are additional options as follows:
 * **encoding** - {string} encoding if string data used, **DEPRECATED**: ignored, will be removed in next release, use Buffer with corresponding string encoding as payload
 * **unique** {string} unique identifiter for the job
 * **toStringEncoding** {string} if given received response will be converted to `String` with this encoding, otherwise payload turned over as `Buffer`
+* **epochTime** {int} if given the job will not run before the given epoch time (will always be a background job!)
 
 ```javascript
 // by default foreground job with normal priority
